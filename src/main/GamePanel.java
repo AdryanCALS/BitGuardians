@@ -1,6 +1,7 @@
 package main;
 
 import entity.Player;
+import tile.TileManager;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -14,27 +15,23 @@ public class GamePanel extends JPanel implements Runnable{
     final int scale = 3; //aumenta em 3x a tela pra ficar numa resolução aceitável
 
     public final int tileSize = originalSize * scale;
-    final int maxScreenCol = 16; //16*48 = 768px
-    final int maxScreenRow = 9; //9*48 = 432px
-    final int screenWidth = tileSize * maxScreenCol;
-    final int screenHeight = tileSize * maxScreenRow;
+    public int maxScreenCol = 16; //16*48 = 768px
+    public int maxScreenRow = 9; //9*48 = 432px
+    public int screenWidth = tileSize * maxScreenCol;
+    public int screenHeight = tileSize * maxScreenRow;
 
 
     //FPS
     int FPS = 60;
 
+    TileManager tileManager = new TileManager(this);
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
     Player player = new Player(this,keyHandler);
 
-    //posição do player
-    int playerX = 100; 
-    int playerY = 100;
-    int playerSpeed = 4;
-
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(Color.PINK);
+        this.setBackground(Color.cyan);
         this.setDoubleBuffered(true);
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
@@ -76,7 +73,10 @@ public void update(){
 public void paintComponent(Graphics g){
     super.paintComponent(g);
     Graphics2D g2 = (Graphics2D)g;
+
+    tileManager.draw(g2);
     player.draw(g2);
+
     g2.dispose();//ajuda a salvar memória, é uma boa prática
 
 
