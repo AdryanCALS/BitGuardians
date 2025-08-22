@@ -27,16 +27,16 @@ public class TileManager {
     public void getTileImage(){
         try{
             tile[0]= new Tile();
-            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/tiles/floor.png"));
+            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/floor.png"));
 
             tile[1]= new Tile();
-            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/tiles/bridge.png"));
+            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/bridge.png"));
 
             tile[2]= new Tile();
-            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/tiles/sky.png"));
+            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/sky.png"));
 
             tile[3]= new Tile();
-            tile[3].image = ImageIO.read(getClass().getResourceAsStream("/tiles/cloud.png"));
+            tile[3].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/cloud.png"));
 
         }catch (IOException e){
             e.printStackTrace();
@@ -44,7 +44,7 @@ public class TileManager {
     }
     public void loadMap(){
         try{
-            InputStream inputStream = getClass().getResourceAsStream("/maps/mapa_base.txt");
+            InputStream inputStream = getClass().getResourceAsStream("/res/maps/mapa_base.txt");
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
             int col = 0;
