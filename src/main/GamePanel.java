@@ -1,6 +1,7 @@
 package main;
 
 import entity.Player;
+import entity.Monster;
 import tile.TileManager;
 
 import java.awt.Color;
@@ -28,6 +29,7 @@ public class GamePanel extends JPanel implements Runnable{
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
     Player player = new Player(this,keyHandler);
+    Monster monster = new Monster(this);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -68,6 +70,7 @@ public void run () { //método necessário para a Thread rodar
     }
 public void update(){
     player.update();
+    monster.update();
 
 }
 public void paintComponent(Graphics g){
@@ -76,6 +79,7 @@ public void paintComponent(Graphics g){
 
     tileManager.draw(g2);
     player.draw(g2);
+    monster.draw(g2);
 
     g2.dispose();//ajuda a salvar memória, é uma boa prática
 

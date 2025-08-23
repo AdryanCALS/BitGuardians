@@ -23,21 +23,21 @@ public class Player extends Entity {
     
     public void getPlayerImage() { //inverti o down com o up no pgn pq achei q fazia mais sentido na animação dele
     	try {                       // vê o que tu acha
-    	    down1 = ImageIO.read(getClass().getResourceAsStream("/player/player/up1.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("/player/player/up2.png"));
-            up1 = ImageIO.read(getClass().getResourceAsStream("/player/player/down1.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("/player/player/down2.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("/player/player/left1.png"));
-            left2 = ImageIO.read(getClass().getResourceAsStream("/player/player/left2.png"));
-            right1 = ImageIO.read(getClass().getResourceAsStream("/player/player/right1.png"));
-            right2 = ImageIO.read(getClass().getResourceAsStream("/player/player/right2.png"));
+    	    down1 = ImageIO.read(getClass().getResourceAsStream("/res/player/up1.png"));
+            down2 = ImageIO.read(getClass().getResourceAsStream("/res/player/up2.png"));
+            up1 = ImageIO.read(getClass().getResourceAsStream("/res/player/down1.png"));
+            up2 = ImageIO.read(getClass().getResourceAsStream("/res/player/down2.png"));
+            left1 = ImageIO.read(getClass().getResourceAsStream("/res/player/left1.png"));
+            left2 = ImageIO.read(getClass().getResourceAsStream("/res/player/left2.png"));
+            right1 = ImageIO.read(getClass().getResourceAsStream("/res/player/right1.png"));
+            right2 = ImageIO.read(getClass().getResourceAsStream("/res/player/right2.png"));
     	}catch(IOException e) {
     		e.printStackTrace();
     	}
     }
     public void setDefaultValues(){
         x = 100;
-        y = 100;
+        y = 300;
         speed = 4;
         direction = "down";
     }
