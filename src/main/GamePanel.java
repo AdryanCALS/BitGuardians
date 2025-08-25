@@ -25,11 +25,14 @@ public class GamePanel extends JPanel implements Runnable{
     //FPS
     int FPS = 60;
 
-    TileManager tileManager = new TileManager(this);
+    public TileManager tileManager;
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
-    Player player = new Player(this,keyHandler);
-    Monster monster = new Monster(this);
+    Player player;
+    Monster monster;
+    public CollisionCheck collisionCheck;
+    
+    
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -37,6 +40,11 @@ public class GamePanel extends JPanel implements Runnable{
         this.setDoubleBuffered(true);
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
+        this.tileManager = new TileManager(this);
+        this.collisionCheck = new CollisionCheck(this);
+        this.player = new Player(this, keyHandler);
+        this.monster = new Monster(this);
+        
     }
 
 public void startThread() {

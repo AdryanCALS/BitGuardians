@@ -2,16 +2,17 @@ package entity;
 
 import main.GamePanel;
 import main.KeyHandler;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
 
 import javax.imageio.ImageIO;
 
 public class Player extends Entity {
     GamePanel gp;
     KeyHandler keyH;
+    
 
     public Player(GamePanel gp, KeyHandler keyH){
         this.gp = gp;
@@ -19,6 +20,8 @@ public class Player extends Entity {
 
         setDefaultValues();
         getPlayerImage();
+
+        solidArea = new Rectangle(8, 16, 32, 32);
     }
     
     public void getPlayerImage() { //inverti o down com o up no pgn pq achei q fazia mais sentido na animação dele
@@ -45,20 +48,37 @@ public class Player extends Entity {
         if(keyH.downPressed==true || keyH.leftPressed == true || keyH.upPressed == true || keyH.rightPressed == true){
             if (keyH.upPressed == true){
                 direction = "up";
-                y -= speed;
             }
             else if (keyH.downPressed == true){
-                direction = "down";
-                y += speed;
+                direction = "down";          
             }
             else if (keyH.leftPressed == true){
                 direction = "left";
-                x -= speed;
             }
             else if (keyH.rightPressed == true){
                 direction = "right";
-                x += speed;
             }
+                colisionON = false;
+                gp.collisionCheck.checkTile(this);
+
+                if (colisionON == false){
+                    switch(direction){
+                    case "up":
+                         y -= speed;
+                        break;
+                     case "down":
+                         y += speed;
+                        break;
+                     case "left":
+                        x -= speed;
+                        break;
+                     case "right":
+                        x += speed;
+                        break;
+                        
+                    }
+                }
+
             spriteCounter++;
             if(spriteCounter>12){
                 if(spriteNum==1){
