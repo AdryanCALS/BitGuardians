@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 
 public class GamePanel extends JPanel implements Runnable{
     final int originalSize = 16; //tamanho de um quadrado
-    final int scale = 3; //aumenta em 3x a tela pra ficar numa resolução aceitável
+    final int scale = 3 ; //aumenta em 3x a tela pra ficar numa resolução aceitável
 
     public final int tileSize = originalSize * scale;
     public int maxScreenCol = 16; //16*48 = 768px

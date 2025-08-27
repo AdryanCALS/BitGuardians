@@ -44,13 +44,62 @@ public class Player extends Entity {
         speed = 4;
         direction = "down";
     }
+//    public void update(){
+//        if(keyH.downPressed==true || keyH.leftPressed == true || keyH.upPressed == true || keyH.rightPressed == true){
+//            if (keyH.upPressed == true){
+//                direction = "up";
+//            }
+//            else if (keyH.downPressed == true){
+//                direction = "down";
+//            }
+//            else if (keyH.leftPressed == true){
+//                direction = "left";
+//            }
+//            else if (keyH.rightPressed == true){
+//                direction = "right";
+//            }
+//                colisionON = false;
+//                gp.collisionCheck.checkTile(this);
+//
+//                if (colisionON == false){
+//                    switch(direction){
+//                    case "up":
+//                         y -= speed;
+//                        break;
+//                     case "down":
+//                         y += speed;
+//                        break;
+//                     case "left":
+//                        x -= speed;
+//                        break;
+//                     case "right":
+//                        x += speed;
+//                        break;
+//
+//                    }
+//                }
+//
+//            spriteCounter++;
+//            if(spriteCounter>12){
+//                if(spriteNum==1){
+//                    spriteNum=2;
+//                } else if (spriteNum==2) {
+//                    spriteNum = 1;
+//                }
+//                spriteCounter = 0;
+//
+//        }
+//
+//        }
+//    }
+
     public void update(){
         if(keyH.downPressed==true || keyH.leftPressed == true || keyH.upPressed == true || keyH.rightPressed == true){
             if (keyH.upPressed == true){
                 direction = "up";
             }
             else if (keyH.downPressed == true){
-                direction = "down";          
+                direction = "down";
             }
             else if (keyH.leftPressed == true){
                 direction = "left";
@@ -58,40 +107,54 @@ public class Player extends Entity {
             else if (keyH.rightPressed == true){
                 direction = "right";
             }
-                colisionON = false;
-                gp.collisionCheck.checkTile(this);
 
-                if (colisionON == false){
-                    switch(direction){
+            // VERIFICA A COLISÃO COM TILES
+            colisionON = false;
+            gp.collisionCheck.checkTile(this);
+
+            // SE NÃO HOUVER COLISÃO, O JOGADOR PODE SE MOVER
+            if (colisionON == false){
+                switch(direction){
                     case "up":
-                         y -= speed;
+                        // Adicionada verificação do limite superior da tela
+                        if (y - speed >= 0) {
+                            y -= speed;
+                        }
                         break;
-                     case "down":
-                         y += speed;
+                    case "down":
+                        // Adicionada verificação do limite inferior da tela
+                        if (y - speed <= gp.screenHeight - gp.tileSize) {
+                            y += speed;
+                        }
                         break;
-                     case "left":
-                        x -= speed;
+                    case "left":
+                        // Adicionada verificação do limite esquerdo da tela
+                        if (x - speed >= 0) {
+                            x -= speed;
+                        }
                         break;
-                     case "right":
-                        x += speed;
+                    case "right":
+                        // Adicionada verificação do limite direito da tela
+                        if (x + speed <= gp.screenWidth - gp.tileSize) {
+                            x += speed;
+                        }
                         break;
-                        
-                    }
                 }
+            }
 
+            // LÓGICA DE ANIMAÇÃO DO SPRITE
             spriteCounter++;
-            if(spriteCounter>12){
-                if(spriteNum==1){
+            if(spriteCounter > 12){
+                if(spriteNum == 1){
                     spriteNum=2;
-                } else if (spriteNum==2) {
+                } else if (spriteNum == 2) {
                     spriteNum = 1;
                 }
                 spriteCounter = 0;
-
-        }
-
+            }
         }
     }
+
     public void draw(Graphics2D g2){
         BufferedImage image = null;
         //perdão pela identação, a IDE ta bugada
