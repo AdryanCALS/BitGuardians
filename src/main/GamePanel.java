@@ -31,7 +31,8 @@ public class GamePanel extends JPanel implements Runnable{
     Player player;
     Monster monster;
     public CollisionCheck collisionCheck;
-    
+    Hud hud;
+
     
 
     public GamePanel() {
@@ -44,8 +45,11 @@ public class GamePanel extends JPanel implements Runnable{
         this.collisionCheck = new CollisionCheck(this);
         this.player = new Player(this, keyHandler);
         this.monster = new Monster(this);
-        
+        this.hud = new Hud(this);
     }
+
+
+
 
 public void startThread() {
     
@@ -79,6 +83,8 @@ public void run () { //método necessário para a Thread rodar
 public void update(){
     player.update();
     monster.update();
+    hud.update();
+    
 
 }
 public void paintComponent(Graphics g){

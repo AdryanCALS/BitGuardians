@@ -13,6 +13,7 @@ public class Monster extends Entity{ //384 em y e 432 em x, coordenadas do monst
 
     public Monster(GamePanel gp){
        this.gp = gp;
+       
 
        setDefaultValues();
        getMonsterImage();
@@ -29,14 +30,15 @@ public void getMonsterImage() {
 
 }
 public void setDefaultValues(){
-        x = 700;
+        x = 900;
         y = 280;
         speed = 2;
     }
     public void update(){
         x -= speed;
-        if (x == 0){ //fiz só para testar, retirar esse if depois!!
-            x = 700;
+        if (x == 0){ 
+            x = 0;
+            speed = 0;
         }
         
         }
