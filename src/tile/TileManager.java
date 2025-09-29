@@ -10,15 +10,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class TileManager {
-    GamePanel gp;
-    public Tile[] tile;
-    public int[][] mapTileNum;
+    private GamePanel gp;
+    private Tile[] tile;
+    private int[][] mapTileNum;
 
     public TileManager(GamePanel gp){
         this.gp = gp;
 
-        tile = new Tile[10];//10 possiveis assets de background, podemos aumentar dps
-        mapTileNum = new int[gp.maxScreenCol][gp.maxScreenRow];
+        tile = new Tile[10];
+        mapTileNum = new int[gp.getMaxScreenCol()][gp.getMaxScreenRow()];
 
         getTileImage();
         loadMap();
@@ -28,29 +28,29 @@ public class TileManager {
         try{
 
             tile[0]= new Tile();
-            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/floor01.png"));
+            tile[0].setImage(ImageIO.read(getClass().getResourceAsStream("/res/tiles/floor01.png")));
 
             tile[1]= new Tile();
-            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/floor02.png"));
+            tile[1].setImage(ImageIO.read(getClass().getResourceAsStream("/res/tiles/floor02.png")));
 
             tile[2]= new Tile();
-            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/floor03.png"));
+            tile[2].setImage(ImageIO.read(getClass().getResourceAsStream("/res/tiles/floor03.png")));
 
             tile[3]= new Tile();
-            tile[3].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/cloud.png"));
-            tile[3].colision = true;
+            tile[3].setImage(ImageIO.read(getClass().getResourceAsStream("/res/tiles/cloud.png")));
+            tile[3].setColision(true);
 
             tile[4]= new Tile();
-            tile[4].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/wall01.png"));
-            tile[4].colision = true;
+            tile[4].setImage(ImageIO.read(getClass().getResourceAsStream("/res/tiles/wall01.png")));
+            tile[4].setColision(true);
 
             tile[5]= new Tile();
-            tile[5].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/wall02.png"));
-            tile[5].colision = true;
+            tile[5].setImage(ImageIO.read(getClass().getResourceAsStream("/res/tiles/wall02.png")));
+            tile[5].setColision(true);
 
             tile[6]= new Tile();
-            tile[6].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/sky.png"));
-            tile[6].colision = true;
+            tile[6].setImage(ImageIO.read(getClass().getResourceAsStream("/res/tiles/sky.png")));
+            tile[6].setColision(true);
 
         }catch (IOException e){
             e.printStackTrace();
@@ -64,18 +64,18 @@ public class TileManager {
             int col = 0;
             int row = 0;
 
-            while(col < gp.maxScreenCol && row<gp.maxScreenRow){
+            while(col < gp.getMaxScreenCol() && row<gp.getMaxScreenRow()){
                 String line = bufferedReader.readLine();
 
-                while(col < gp.maxScreenCol){
+                while(col < gp.getMaxScreenCol()){
                     String[] numbers = line.split(" ");
 
-                    int num = Integer.parseInt(numbers[col]);//transformando de uma STring para um int
+                    int num = Integer.parseInt(numbers[col]);
 
                     mapTileNum[col][row] = num;
                     col++;
                 }
-                if(col == gp.maxScreenCol){
+                if(col == gp.getMaxScreenCol()){
                     col = 0;
                     row++;
                 }
@@ -92,19 +92,27 @@ public class TileManager {
         int x = 0;
         int y = 0;
 
-        while(col<gp.maxScreenCol && row < gp.maxScreenRow){
+        while(col<gp.getMaxScreenCol() && row < gp.getMaxScreenRow()){
 
-            int tileNum = mapTileNum[col][row];//guarda os valores
+            int tileNum = mapTileNum[col][row];
 
-            g2.drawImage(tile[tileNum].image, x, y, gp.tileSize, gp.tileSize,null);
+            g2.drawImage(tile[tileNum].getImage(), x, y, gp.getTileSize(), gp.getTileSize(),null);
             col++;
-            x+=gp.tileSize;
-            if(col == gp.maxScreenCol){
+            x+=gp.getTileSize();
+            if(col == gp.getMaxScreenCol()){
                 col = 0;
                 x = 0;
                 row++;
-                y += gp.tileSize;
+                y += gp.getTileSize();
             }
         }
+    }
+
+    public Tile[] getTile() {
+        return tile;
+    }
+
+    public int[][] getMapTileNum() {
+        return mapTileNum;
     }
 }

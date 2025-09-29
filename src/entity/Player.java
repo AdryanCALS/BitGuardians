@@ -10,9 +10,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Player extends Entity {
-    GamePanel gp;
-    KeyHandler keyH;
-    
+    private GamePanel gp;
+    private KeyHandler keyH;
+
 
     public Player(GamePanel gp, KeyHandler keyH){
         this.gp = gp;
@@ -21,179 +21,131 @@ public class Player extends Entity {
         setDefaultValues();
         getPlayerImage();
 
-        solidArea = new Rectangle(8, 16, 32, 32);
+        setSolidArea(new Rectangle(8, 16, 32, 32));
     }
-    
-    public void getPlayerImage() { //inverti o down com o up no pgn pq achei q fazia mais sentido na animação dele
-    	try {                       // vê o que tu acha
-    	    down1 = ImageIO.read(getClass().getResourceAsStream("/res/player/up1.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("/res/player/up2.png"));
-            up1 = ImageIO.read(getClass().getResourceAsStream("/res/player/down1.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("/res/player/down2.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("/res/player/left1.png"));
-            left2 = ImageIO.read(getClass().getResourceAsStream("/res/player/left2.png"));
-            right1 = ImageIO.read(getClass().getResourceAsStream("/res/player/right1.png"));
-            right2 = ImageIO.read(getClass().getResourceAsStream("/res/player/right2.png"));
-    	}catch(IOException e) {
-    		e.printStackTrace();
-    	}
+
+    public void getPlayerImage() {
+        try {
+            setDown1(ImageIO.read(getClass().getResourceAsStream("/res/player/up1.png")));
+            setDown2(ImageIO.read(getClass().getResourceAsStream("/res/player/up2.png")));
+            setUp1(ImageIO.read(getClass().getResourceAsStream("/res/player/down1.png")));
+            setUp2(ImageIO.read(getClass().getResourceAsStream("/res/player/down2.png")));
+            setLeft1(ImageIO.read(getClass().getResourceAsStream("/res/player/left1.png")));
+            setLeft2(ImageIO.read(getClass().getResourceAsStream("/res/player/left2.png")));
+            setRight1(ImageIO.read(getClass().getResourceAsStream("/res/player/right1.png")));
+            setRight2(ImageIO.read(getClass().getResourceAsStream("/res/player/right2.png")));
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
     }
     public void setDefaultValues(){
-        x = 100;
-        y = 300;
-        speed = 4;
-        direction = "down";
+        setX(100);
+        setY(300);
+        setSpeed(4);
+        setDirection("down");
     }
-//    public void update(){
-//        if(keyH.downPressed==true || keyH.leftPressed == true || keyH.upPressed == true || keyH.rightPressed == true){
-//            if (keyH.upPressed == true){
-//                direction = "up";
-//            }
-//            else if (keyH.downPressed == true){
-//                direction = "down";
-//            }
-//            else if (keyH.leftPressed == true){
-//                direction = "left";
-//            }
-//            else if (keyH.rightPressed == true){
-//                direction = "right";
-//            }
-//                colisionON = false;
-//                gp.collisionCheck.checkTile(this);
-//
-//                if (colisionON == false){
-//                    switch(direction){
-//                    case "up":
-//                         y -= speed;
-//                        break;
-//                     case "down":
-//                         y += speed;
-//                        break;
-//                     case "left":
-//                        x -= speed;
-//                        break;
-//                     case "right":
-//                        x += speed;
-//                        break;
-//
-//                    }
-//                }
-//
-//            spriteCounter++;
-//            if(spriteCounter>12){
-//                if(spriteNum==1){
-//                    spriteNum=2;
-//                } else if (spriteNum==2) {
-//                    spriteNum = 1;
-//                }
-//                spriteCounter = 0;
-//
-//        }
-//
-//        }
-//    }
 
     public void update(){
-        if(keyH.downPressed==true || keyH.leftPressed == true || keyH.upPressed == true || keyH.rightPressed == true){
-            if (keyH.upPressed == true){
-                direction = "up";
+        if(keyH.isUpPressed() || keyH.isDownPressed() || keyH.isLeftPressed() || keyH.isRightPressed()){
+            if (keyH.isUpPressed()){
+                setDirection("up");
             }
-            else if (keyH.downPressed == true){
-                direction = "down";
+            else if (keyH.isDownPressed()){
+                setDirection("down");
             }
-            else if (keyH.leftPressed == true){
-                direction = "left";
+            else if (keyH.isLeftPressed()){
+                setDirection("left");
             }
-            else if (keyH.rightPressed == true){
-                direction = "right";
+            else if (keyH.isRightPressed()){
+                setDirection("right");
             }
 
             // VERIFICA A COLISÃO COM TILES
-            colisionON = false;
-            gp.collisionCheck.checkTile(this);
+            setColisionON(false);
+            gp.getCollisionCheck().checkTile(this);
 
             // SE NÃO HOUVER COLISÃO, O JOGADOR PODE SE MOVER
-            if (colisionON == false){
-                switch(direction){
+            if (!isColisionON()){
+                switch(getDirection()){
                     case "up":
                         // Adicionada verificação do limite superior da tela
-                        if (y - speed >= 0) {
-                            y -= speed;
+                        if (getY() - getSpeed() >= 0) {
+                            setY(getY() - getSpeed());
                         }
                         break;
                     case "down":
                         // Adicionada verificação do limite inferior da tela
-                        if (y - speed <= gp.screenHeight - gp.tileSize) {
-                            y += speed;
+                        if (getY() - getSpeed() <= gp.getScreenHeight() - gp.getTileSize()) {
+                            setY(getY() + getSpeed());
                         }
                         break;
                     case "left":
                         // Adicionada verificação do limite esquerdo da tela
-                        if (x - speed >= 0) {
-                            x -= speed;
+                        if (getX() - getSpeed() >= 0) {
+                            setX(getX() - getSpeed());
                         }
                         break;
                     case "right":
                         // Adicionada verificação do limite direito da tela
-                        if (x + speed <= gp.screenWidth - gp.tileSize) {
-                            x += speed;
+                        if (getX() + getSpeed() <= gp.getScreenWidth() - gp.getTileSize()) {
+                            setX(getX() + getSpeed());
                         }
                         break;
                 }
             }
 
             // LÓGICA DE ANIMAÇÃO DO SPRITE
-            spriteCounter++;
-            if(spriteCounter > 12){
-                if(spriteNum == 1){
-                    spriteNum=2;
-                } else if (spriteNum == 2) {
-                    spriteNum = 1;
+            setSpriteCounter(getSpriteCounter() + 1);
+            if(getSpriteCounter() > 12){
+                if(getSpriteNum() == 1){
+                    setSpriteNum(2);
+                } else if (getSpriteNum() == 2) {
+                    setSpriteNum(1);
                 }
-                spriteCounter = 0;
+                setSpriteCounter(0);
             }
         }
     }
 
     public void draw(Graphics2D g2){
         BufferedImage image = null;
-        //perdão pela identação, a IDE ta bugada
-        switch(direction) {
-        case "up":
-            if(spriteNum == 1){
-                image = up1;
-            }
-            if(spriteNum == 2){
-                image = up2;
-            }
 
-        	break;
-            case "down":
-                if(spriteNum == 1){
-                    image = down1;
+        switch(getDirection()) {
+            case "up":
+                if(getSpriteNum() == 1){
+                    image = getUp1();
                 }
-                if(spriteNum == 2){
-                    image = down2;
+                if(getSpriteNum() == 2){
+                    image = getUp2();
+                }
+
+                break;
+            case "down":
+                if(getSpriteNum() == 1){
+                    image = getDown1();
+                }
+                if(getSpriteNum() == 2){
+                    image = getDown2();
                 }
                 break;
             case "left":
-                if(spriteNum == 1){
-                    image = left1;
+                if(getSpriteNum() == 1){
+                    image = getLeft1();
                 }
-                if(spriteNum == 2){
-                    image = left2;
+                if(getSpriteNum() == 2){
+                    image = getLeft2();
                 }
                 break;
             case "right":
-                if(spriteNum == 1){
-                    image = right1;
+                if(getSpriteNum() == 1){
+                    image = getRight1();
                 }
-                if(spriteNum == 2){
-                    image = right2;
+                if(getSpriteNum() == 2){
+                    image = getRight2();
                 }
                 break;
         }
-        g2.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
-        
+        g2.drawImage(image, getX(), getY(), gp.getTileSize(), gp.getTileSize(), null);
+
     }
 }
