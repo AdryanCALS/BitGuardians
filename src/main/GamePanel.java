@@ -29,7 +29,7 @@ public class GamePanel extends JPanel implements Runnable{
     private KeyHandler keyHandler = new KeyHandler();
     private Thread gameThread;
     private Player player;
-    private Monster monster;
+    private WaveManager waveManager;
     private CollisionCheck collisionCheck;
     private Hud hud;
 
@@ -44,8 +44,9 @@ public class GamePanel extends JPanel implements Runnable{
         this.tileManager = new TileManager(this);
         this.collisionCheck = new CollisionCheck(this);
         this.player = new Player(this, keyHandler);
-        this.monster = new Monster(this);
         this.hud = new Hud(this);
+        this.waveManager = new WaveManager(this);
+
     }
 
 
@@ -82,7 +83,7 @@ public class GamePanel extends JPanel implements Runnable{
     }
     public void update(){
         player.update();
-        monster.update();
+        waveManager.update();
         hud.update();
 
 
@@ -93,7 +94,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         tileManager.draw(g2);
         player.draw(g2);
-        monster.draw(g2);
+        waveManager.draw(g2);
 
         g2.dispose();
 
@@ -128,7 +129,11 @@ public class GamePanel extends JPanel implements Runnable{
         return collisionCheck;
     }
 
-    public Monster getMonster() {
-        return monster;
+    public Hud getHud(){ return hud;}
+
+    public WaveManager getWaveManager() {
+        return waveManager;
     }
+
+
 }

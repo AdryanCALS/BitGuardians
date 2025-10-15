@@ -11,11 +11,9 @@ import javax.imageio.ImageIO;
 public class Monster extends Entity{
     private GamePanel gp;
 
-    public Monster(GamePanel gp){
+    public Monster(GamePanel gp, int startX, int startY){
         this.gp = gp;
-
-
-        setDefaultValues();
+        setDefaultValues(startX, startY);
         getMonsterImage();
     }
 
@@ -29,14 +27,15 @@ public class Monster extends Entity{
         }
 
     }
-    public void setDefaultValues(){
-        setX(900);
-        setY(280);
+    public void setDefaultValues(int startX, int startY){
+        setX(startX);
+        setY(startY);
         setSpeed(2);
     }
     public void update(){
-        setX(getX() - getSpeed());
-        if (getX() <= 0){
+        if (getX() > 0) {
+            setX(getX() - getSpeed());
+        } else{
             setX(0);
             setSpeed(0);
         }
