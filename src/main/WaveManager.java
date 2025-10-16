@@ -86,10 +86,9 @@ public class WaveManager {
     private void startNextWave() {
         if (gp.getHud().GameOver()) return;
 
-        monstersToSpawnInWave = 5 + (currentWave * 3);
+        monstersToSpawnInWave = 1 + (currentWave * 3);
         spawnedCount = 0;
         waveInProgress = true;
-        System.out.println("--- Iniciando Onda: " + currentWave);
         lastSpawnTime = System.currentTimeMillis();
     }
 

@@ -8,6 +8,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Font;
+import java.awt.FontMetrics;
 
 import javax.swing.JPanel;
 
@@ -24,6 +26,12 @@ public class GamePanel extends JPanel implements Runnable{
 
     //FPS
     private int FPS = 60;
+
+    public final int menuState = 0;
+    public final int characterMenuState = 1;
+    public final int playState = 3;
+    public int gameState;
+    public int menuNum = 0;
 
     private TileManager tileManager;
     private KeyHandler keyHandler = new KeyHandler();
@@ -46,6 +54,8 @@ public class GamePanel extends JPanel implements Runnable{
         this.player = new Player(this, keyHandler);
         this.hud = new Hud(this);
         this.waveManager = new WaveManager(this);
+
+        gameState = menuState;
 
     }
 
@@ -82,24 +92,120 @@ public class GamePanel extends JPanel implements Runnable{
 
     }
     public void update(){
-        player.update();
-        waveManager.update();
-        hud.update();
+        if ( gameState == playState){
+            player.update();
+            waveManager.update();
+            hud.update();
+        } else if (gameState==menuState) {
 
-
+            if (keyHandler.isDownPressed()|| keyHandler.isUpPressed()){
+                if (keyHandler.isUpPressed()){
+                    menuNum--;
+                    if (menuNum < 0){
+                        menuNum= 1;
+                    }
+                    keyHandler.setUpPressed(false);
+                }
+                if(keyHandler.isDownPressed()){
+                    menuNum++;
+                    if(menuNum > 1){
+                        menuNum= 0;
+                    }
+                    keyHandler.setDownPressed(false);
+                }
+            }
+            if (keyHandler.isEnterPressed()) {
+                if (menuNum == 0) {
+                    gameState = characterMenuState;
+                } else if (menuNum == 1) {
+                    System.exit(0);
+                }
+                keyHandler.setEnterPressed(false);
+            }
+        } else if (gameState == characterMenuState) {
+            // sair da tela de seleção (placeholder)
+            if (keyHandler.isEnterPressed()) {
+                gameState = playState;
+                keyHandler.setEnterPressed(false);
+            }
+        }
     }
+
+
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
 
-        tileManager.draw(g2);
-        player.draw(g2);
-        waveManager.draw(g2);
+        if (gameState==menuState) {
+            drawMenu(g2);
+        } else if (gameState == playState || gameState == characterMenuState) {
+            tileManager.draw(g2);
+            player.draw(g2);
+            waveManager.draw(g2);
+
+            if (gameState == characterMenuState) {
+                g2.setColor(new Color(0, 0, 0, 150));
+                g2.fillRect(0, 0, screenWidth, screenHeight);
+
+                g2.setColor(Color.white);
+                g2.setFont(new Font("Arial", Font.BOLD, 20));
+                String text = "TELA DE SELEÇÃO DE PERSONAGEM (WIP)";
+                int x = getXforCenteredText(g2, text);
+                int y = screenHeight / 2;
+                g2.drawString(text, x, y);
+
+                text = "Aperte ENTER para começar";
+                g2.setFont(new Font("Arial", Font.PLAIN, 20));
+                x = getXforCenteredText(g2, text);
+                y += 50;
+                g2.drawString(text, x, y);
+            }
+        }
 
         g2.dispose();
 
-
     }
+
+    public void drawMenu(Graphics2D g2) {
+        // Fundo
+        g2.setColor(Color.darkGray);
+        g2.fillRect(0, 0, screenWidth, screenHeight);
+
+        // Título do Jogo
+        g2.setFont(new Font("Arial", Font.BOLD, 70));
+        String title = "BitGuardians";
+        g2.setColor(Color.white);
+        int x = getXforCenteredText(g2, title);
+        int y = tileSize * 2;
+        g2.drawString(title, x, y);
+
+        // Opções do Menu
+        g2.setFont(new Font("Arial", Font.PLAIN, 40));
+
+        // JOGAR
+        String textJogar = "JOGAR";
+        x = getXforCenteredText(g2, textJogar);
+        y += tileSize * 3;
+        g2.drawString(textJogar, x, y);
+        if (menuNum == 0) {
+            g2.drawString(">", x - tileSize, y);
+        }
+
+        // SAIR
+        String textSair = "SAIR";
+        x = getXforCenteredText(g2, textSair);
+        y += tileSize * 1.5;
+        g2.drawString(textSair, x, y);
+        if (menuNum == 1) {
+            g2.drawString(">", x - tileSize, y);
+        }
+    }
+
+    public int getXforCenteredText(Graphics2D g2, String text) {
+        int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+        return (screenWidth - length) / 2;
+    }
+
 
     public int getTileSize() {
         return tileSize;
