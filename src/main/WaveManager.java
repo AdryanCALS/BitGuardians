@@ -39,7 +39,8 @@ public class WaveManager {
                 tileSize * 3 + (tileSize / 2),
                 tileSize * 4 + (tileSize / 2),
                 tileSize * 5 + (tileSize / 2),
-                tileSize * 6 + (tileSize / 2)
+                tileSize * 6 + (tileSize / 2),
+
         };
 
         startNextWave();

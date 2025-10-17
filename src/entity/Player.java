@@ -16,6 +16,7 @@ public class Player extends Entity {
     private boolean attacking = false;
     private GamePanel gp;
     private KeyHandler keyH;
+    private String characterClass;
 
 
     public Player(GamePanel gp, KeyHandler keyH){
@@ -24,22 +25,41 @@ public class Player extends Entity {
 
         attackArea = new Rectangle(0,0,0,0);//possivel modificar a área de ataque
 
+        //Define uma classe inicial e chama a inicialização para evitar NullPointerException.
+        this.characterClass = gp.getClassEspadachim(); // Define Espadachim como padrão
         setDefaultValues();
         getPlayerImage();
 
         setSolidArea(new Rectangle(8, 16, 32, 32));
     }
 
+    public void setCharacterClass(String characterClass) {
+        this.characterClass = characterClass;
+    }
+
     public void getPlayerImage() {
         try {
-            setDown1(ImageIO.read(getClass().getResourceAsStream("/res/player/up1.png")));
-            setDown2(ImageIO.read(getClass().getResourceAsStream("/res/player/up2.png")));
-            setUp1(ImageIO.read(getClass().getResourceAsStream("/res/player/down1.png")));
-            setUp2(ImageIO.read(getClass().getResourceAsStream("/res/player/down2.png")));
-            setLeft1(ImageIO.read(getClass().getResourceAsStream("/res/player/left1.png")));
-            setLeft2(ImageIO.read(getClass().getResourceAsStream("/res/player/left2.png")));
-            setRight1(ImageIO.read(getClass().getResourceAsStream("/res/player/right1.png")));
-            setRight2(ImageIO.read(getClass().getResourceAsStream("/res/player/right2.png")));
+            if (characterClass.equals(gp.getClassEspadachim())) {
+                // Configuração atual do Espadachim (mantendo o aparente swap de up/down da implementação original)
+                setDown1(ImageIO.read(getClass().getResourceAsStream("/res/player/up1.png")));
+                setDown2(ImageIO.read(getClass().getResourceAsStream("/res/player/up2.png")));
+                setUp1(ImageIO.read(getClass().getResourceAsStream("/res/player/down1.png")));
+                setUp2(ImageIO.read(getClass().getResourceAsStream("/res/player/down2.png")));
+                setLeft1(ImageIO.read(getClass().getResourceAsStream("/res/player/left1.png")));
+                setLeft2(ImageIO.read(getClass().getResourceAsStream("/res/player/left2.png")));
+                setRight1(ImageIO.read(getClass().getResourceAsStream("/res/player/right1.png")));
+                setRight2(ImageIO.read(getClass().getResourceAsStream("/res/player/right2.png")));
+            } else if (characterClass.equals(gp.getClassMago())) {
+                //adicionar as imagens do mago depois
+                setUp1(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
+                setUp2(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
+                setDown1(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
+                setDown2(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
+                setLeft1(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
+                setLeft2(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
+                setRight1(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
+                setRight2(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
+            }
         }catch(IOException e) {
             e.printStackTrace();
         }
@@ -50,6 +70,21 @@ public class Player extends Entity {
         setSpeed(4);
         setDirection("down");
         setLife(5);//dependendo da classe de jogador a vida seria diferente
+
+        //  DEIXANDO AQUI PARA TALVEZ ADICIONAR DEPOIS
+        //if (characterClass.equals(gp.getClassEspadachim())) {
+          //  setSpeed(4);
+          //  setLife(5);
+       // } else if (characterClass.equals(gp.getClassMago())) {
+            //
+          //  setSpeed(3);
+          //  setLife(3);
+       // }
+   // }
+    }
+
+    public BufferedImage getDisplayImage() {
+        return getDown1();
     }
 
     public void update(){
@@ -57,10 +92,14 @@ public class Player extends Entity {
             attackCounter++;
 
             if(attackCounter >5 && attackCounter<10){
-                int monsterIndex = gp.getCollisionCheck().checkEntity(this, gp.getWaveManager().getActiveMonsters());
-                if(monsterIndex != -1){
-                    gp.getWaveManager().damageMonster(monsterIndex, 1);
-                    attacking = false;
+                if (characterClass.equals(gp.getClassEspadachim())) {
+                    int monsterIndex = gp.getCollisionCheck().checkEntity(this, gp.getWaveManager().getActiveMonsters());
+                    if(monsterIndex != -1){
+                        gp.getWaveManager().damageMonster(monsterIndex, 1);
+                        attacking = false;
+                    }
+                } else if (characterClass.equals(gp.getClassMago())) {
+                    // terminar o ataque do mago (talvez projétil em área)
                 }
             }
 
@@ -153,36 +192,41 @@ public class Player extends Entity {
 
         if(keyH.isAttackPressed()){
             attack();
+            attacking=true;
             keyH.setAttackPressed(false);
         }
     }
 
     public void attack(){
-        int currentX = getX();
-        int currentY = getY();
-        int solidAreaWidth = getSolidArea().width;
-        int solidAreaHeight = getSolidArea().height;
+        if (characterClass.equals(gp.getClassEspadachim())) {
+            int currentX = getX();
+            int currentY = getY();
+            int solidAreaWidth = getSolidArea().width;
+            int solidAreaHeight = getSolidArea().height;
 
-        switch (getDirection()){
-            case "up":
-                attackArea.x = currentX;
-                attackArea.y = currentY - solidAreaHeight;
-                break;
-            case "down":
-                attackArea.x = currentX;
-                attackArea.y = currentY + solidAreaHeight;
-                break;
-            case "left":
-                attackArea.x = currentX - solidAreaWidth;
-                attackArea.y = currentY;
-                break;
-            case "right":
-                attackArea.x = currentX + solidAreaWidth;
-                attackArea.y = currentY;
-                break;
+            switch (getDirection()){
+                case "up":
+                    attackArea.x = currentX;
+                    attackArea.y = currentY - solidAreaHeight;
+                    break;
+                case "down":
+                    attackArea.x = currentX;
+                    attackArea.y = currentY + solidAreaHeight;
+                    break;
+                case "left":
+                    attackArea.x = currentX - solidAreaWidth;
+                    attackArea.y = currentY;
+                    break;
+                case "right":
+                    attackArea.x = currentX + solidAreaWidth;
+                    attackArea.y = currentY;
+                    break;
+            }
+            attackArea.width = solidAreaWidth;
+            attackArea.height = solidAreaHeight;
+        } else if (characterClass.equals(gp.getClassMago())) {
+            //Fazer ataque do mago;
         }
-        attackArea.width = solidAreaWidth;
-        attackArea.height = solidAreaHeight;
     }
 
     public void takeDamage(int damage){
