@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 public class Entity {
+    private int life;
     private int x,y;
     private int speed;
     private BufferedImage up1,up2,down1,down2,left1,left2,right1,right2;
@@ -14,6 +15,13 @@ public class Entity {
 
     private Rectangle solidArea;
     private boolean colisionON = false;
+
+    public int getLife(){
+        return life;
+    }
+    public void setLife(int life){
+        this.life = life;
+    }
 
     public int getX() {
         return x;

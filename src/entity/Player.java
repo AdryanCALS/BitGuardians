@@ -10,6 +10,10 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Player extends Entity {
+    private int attackCounter = 0;
+    private final int attackDuration = 15; //duração do ataque
+    private Rectangle attackArea;
+    private boolean attacking = false;
     private GamePanel gp;
     private KeyHandler keyH;
 
@@ -17,6 +21,8 @@ public class Player extends Entity {
     public Player(GamePanel gp, KeyHandler keyH){
         this.gp = gp;
         this.keyH = keyH;
+
+        attackArea = new Rectangle(0,0,0,0);//possivel modificar a área de ataque
 
         setDefaultValues();
         getPlayerImage();
@@ -43,9 +49,45 @@ public class Player extends Entity {
         setY(300);
         setSpeed(4);
         setDirection("down");
+        setLife(5);//dependendo da classe de jogador a vida seria diferente
     }
 
     public void update(){
+        if(attacking){
+            attackCounter++;
+
+            if(attackCounter >5 && attackCounter<10){
+                int monsterIndex = gp.getCollisionCheck().checkEntity(this, gp.getWaveManager().getActiveMonsters());
+                if(monsterIndex != -1){
+                    gp.getWaveManager().damageMonster(monsterIndex, 1);
+                    attacking = false;
+                }
+            }
+
+            if(attackCounter>attackDuration){
+                attackCounter=0;
+                attacking=false;
+            }
+
+            return;
+        }
+
+        Monster collidingMonster = gp.getCollisionCheck().checkPlayerMonsterCollision(this, gp.getWaveManager().getActiveMonsters());
+        if (collidingMonster != null) {
+            // Se colidiu, aplica o empurrão e impede o movimento normal
+            int knockbackSpeed = 5; // A "força" do empurrão
+            int dx = getX() - collidingMonster.getX();
+            int dy = getY() - collidingMonster.getY();
+
+            // Normaliza o vetor para obter a direção
+            double distance = Math.sqrt(dx*dx + dy*dy);
+            double knockbackX = (dx / distance) * knockbackSpeed;
+            double knockbackY = (dy / distance) * knockbackSpeed;
+
+            setX(getX() + (int)knockbackX);
+            setY(getY() + (int)knockbackY);
+        }
+
         if(keyH.isUpPressed() || keyH.isDownPressed() || keyH.isLeftPressed() || keyH.isRightPressed()){
             if (keyH.isUpPressed()){
                 setDirection("up");
@@ -63,6 +105,9 @@ public class Player extends Entity {
             // VERIFICA A COLISÃO COM TILES
             setColisionON(false);
             gp.getCollisionCheck().checkTile(this);
+
+            //VERIFICA A COLISÃO COM MONSTROS
+//            gp.getCollisionCheck().checkPlayerMonsterCollision(this, gp.getWaveManager().getActiveMonsters());
 
             // SE NÃO HOUVER COLISÃO, O JOGADOR PODE SE MOVER
             if (!isColisionON()){
@@ -104,6 +149,46 @@ public class Player extends Entity {
                 }
                 setSpriteCounter(0);
             }
+        }
+
+        if(keyH.isAttackPressed()){
+            attack();
+            keyH.setAttackPressed(false);
+        }
+    }
+
+    public void attack(){
+        int currentX = getX();
+        int currentY = getY();
+        int solidAreaWidth = getSolidArea().width;
+        int solidAreaHeight = getSolidArea().height;
+
+        switch (getDirection()){
+            case "up":
+                attackArea.x = currentX;
+                attackArea.y = currentY - solidAreaHeight;
+                break;
+            case "down":
+                attackArea.x = currentX;
+                attackArea.y = currentY + solidAreaHeight;
+                break;
+            case "left":
+                attackArea.x = currentX - solidAreaWidth;
+                attackArea.y = currentY;
+                break;
+            case "right":
+                attackArea.x = currentX + solidAreaWidth;
+                attackArea.y = currentY;
+                break;
+        }
+        attackArea.width = solidAreaWidth;
+        attackArea.height = solidAreaHeight;
+    }
+
+    public void takeDamage(int damage){
+        setLife(getLife()-damage);
+        if(getLife() <=0){
+            System.out.println("Game over!");
         }
     }
 

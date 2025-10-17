@@ -15,8 +15,19 @@ public class Monster extends Entity{
         this.gp = gp;
         setDefaultValues(startX, startY);
         getMonsterImage();
+
+        setSolidArea(new Rectangle(8,16,32,32));
+        setLife(3);
     }
 
+    public void takeDamage(int damage){
+        setLife(getLife()-damage);
+
+        //provisorio enquanto não adicionamos moedas
+        if(getLife() <=0 ){
+            System.out.println("Monstro derrotado");
+        }
+    }
 
 
     public void getMonsterImage() {

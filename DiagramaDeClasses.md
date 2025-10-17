@@ -6,7 +6,7 @@ classDiagram
     }
 
     class GamePanel {
-        <<JPanel, Runnable>>
+        &lt;&lt;JPanel, Runnable&gt;&gt;
         -int tileSize
         -int maxScreenCol
         -int maxScreenRow
@@ -17,6 +17,7 @@ classDiagram
         -KeyHandler keyHandler
         -TileManager tileManager
         -CollisionCheck collisionCheck
+        -Hud hud
         +GamePanel()
         +startThread()
         +run()
@@ -25,7 +26,7 @@ classDiagram
     }
 
     class KeyHandler {
-        <<KeyListener>>
+        &lt;&lt;KeyListener&gt;&gt;
         +boolean upPressed
         +boolean downPressed
         +boolean leftPressed
@@ -86,21 +87,32 @@ classDiagram
         +checkTile(Entity entity)
     }
 
-    Main --> GamePanel : cria
-    GamePanel o-- Player : compõe 1
-    GamePanel o-- Monster : compõe 1
-    GamePanel o-- KeyHandler : compõe 1
-    GamePanel o-- TileManager : compõe 1
-    GamePanel o-- CollisionCheck : compõe 1
-    
-    Player --|> Entity : herda de
-    Monster --|> Entity : herda de
+    class Hud {
+        -GamePanel gp
+        -int life
+        -int wave
+        -long lastDamageTime
+        -long cooldown
+        +Hud(GamePanel gp)
+        +update()
+        +getLife()
+        +getWave()
+    }
 
-    Player ..> KeyHandler : depende de
-    Player ..> GamePanel : depende de
-    Monster ..> GamePanel : depende de
-    TileManager ..> GamePanel : depende de
-    CollisionCheck ..> GamePanel : depende de
-    CollisionCheck ..> Entity : depende de
-    
-    TileManager o-- "10" Tile : compõe
+    Main --&gt; GamePanel
+    GamePanel --o Player
+    GamePanel --o Monster
+    GamePanel --o KeyHandler
+    GamePanel --o TileManager
+    GamePanel --o CollisionCheck
+    GamePanel --o Hud
+    Player --|&gt; Entity
+    Monster --|&gt; Entity
+    Player ..&gt; KeyHandler
+    Player ..&gt; GamePanel
+    Monster ..&gt; GamePanel
+    TileManager ..&gt; GamePanel
+    CollisionCheck ..&gt; GamePanel
+    CollisionCheck ..&gt; Entity
+    Hud ..&gt; GamePanel
+    TileManager "1" --o "10" Tile

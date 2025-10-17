@@ -45,6 +45,23 @@ public class WaveManager {
         startNextWave();
     }
 
+    public void damageMonster(int index, int damage) {
+        if (index != -1) {
+            try {
+                Monster monster = activeMonsters.get(index);
+                monster.takeDamage(damage);
+                if (monster.getLife() <= 0) {
+                    activeMonsters.remove(index);
+                }
+            } catch (IndexOutOfBoundsException e) {
+                // Ignora o erro, pois o monstro pode já ter sido removido por outro processo
+            }
+        }
+    }
+
+    public List<Monster> getActiveMonsters(){
+        return activeMonsters;
+    }
     public void update() {
         if (gp.getHud().GameOver()) {
             return;
