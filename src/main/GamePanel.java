@@ -2,6 +2,7 @@ package main;
 
 import entity.Player;
 import entity.Monster;
+import entity.Projectile;
 import tile.TileManager;
 
 import java.awt.Color;
@@ -10,6 +11,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -23,6 +25,7 @@ public class GamePanel extends JPanel implements Runnable{
     private int screenWidth = tileSize * maxScreenCol;
     private int screenHeight = tileSize * maxScreenRow;
 
+    private java.util.List<entity.Projectile> projectiles = new java.util.ArrayList<>();
 
     //FPS
     private int FPS = 60;
@@ -44,8 +47,6 @@ public class GamePanel extends JPanel implements Runnable{
     private CollisionCheck collisionCheck;
     private Hud hud;
 
-
-
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.cyan);
@@ -61,9 +62,6 @@ public class GamePanel extends JPanel implements Runnable{
         gameState = menuState;
 
     }
-
-
-
 
     public void startThread() {
 
@@ -94,11 +92,22 @@ public class GamePanel extends JPanel implements Runnable{
         }
 
     }
+
     public void update(){
         if ( gameState == playState){
             player.update();
             waveManager.update();
             hud.update();
+            java.util.Iterator<entity.Projectile> iterator = projectiles.iterator();
+            while (iterator.hasNext()) {
+                entity.Projectile p = iterator.next();
+                if (p.getLife() <= 0) {
+                    iterator.remove(); // Maneira segura de remover itens durante a iteração
+                } else {
+                    p.update();
+                }
+            }
+
         } else if (gameState==menuState) {
 
             if (keyHandler.isDownPressed()|| keyHandler.isUpPressed()){
@@ -156,7 +165,6 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
-
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
@@ -167,6 +175,10 @@ public class GamePanel extends JPanel implements Runnable{
             tileManager.draw(g2);
             player.draw(g2);
             waveManager.draw(g2);
+
+            for (entity.Projectile p : projectiles) {
+                p.draw(g2);
+            }
 
             // DESENHA O MENU DE SELEÇÃO POR CIMA DO JOGO
             if (gameState == characterMenuState) {
@@ -295,6 +307,10 @@ public class GamePanel extends JPanel implements Runnable{
         return (screenWidth - length) / 2;
     }
 
+
+    public List<Projectile> getProjectiles() {
+        return projectiles;
+    }
 
     public int getTileSize() {
         return tileSize;

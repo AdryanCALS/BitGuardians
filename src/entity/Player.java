@@ -23,7 +23,7 @@ public class Player extends Entity {
         this.gp = gp;
         this.keyH = keyH;
 
-        attackArea = new Rectangle(0,0,0,0);//possivel modificar a área de ataque
+        attackArea = new Rectangle(0,0,32,32);//possivel modificar a área de ataque
 
         //Define uma classe inicial e chama a inicialização para evitar NullPointerException.
         this.characterClass = gp.getClassEspadachim(); // Define Espadachim como padrão
@@ -35,6 +35,10 @@ public class Player extends Entity {
 
     public void setCharacterClass(String characterClass) {
         this.characterClass = characterClass;
+    }
+
+    public Rectangle getAttackArea(){
+        return attackArea;
     }
 
     public void getPlayerImage() {
@@ -113,12 +117,11 @@ public class Player extends Entity {
 
         Monster collidingMonster = gp.getCollisionCheck().checkPlayerMonsterCollision(this, gp.getWaveManager().getActiveMonsters());
         if (collidingMonster != null) {
-            // Se colidiu, aplica o empurrão e impede o movimento normal
-            int knockbackSpeed = 5; // A "força" do empurrão
+
+            int knockbackSpeed = 5;
             int dx = getX() - collidingMonster.getX();
             int dy = getY() - collidingMonster.getY();
 
-            // Normaliza o vetor para obter a direção
             double distance = Math.sqrt(dx*dx + dy*dy);
             double knockbackX = (dx / distance) * knockbackSpeed;
             double knockbackY = (dy / distance) * knockbackSpeed;
@@ -146,7 +149,6 @@ public class Player extends Entity {
             gp.getCollisionCheck().checkTile(this);
 
             //VERIFICA A COLISÃO COM MONSTROS
-//            gp.getCollisionCheck().checkPlayerMonsterCollision(this, gp.getWaveManager().getActiveMonsters());
 
             // SE NÃO HOUVER COLISÃO, O JOGADOR PODE SE MOVER
             if (!isColisionON()){
@@ -225,7 +227,13 @@ public class Player extends Entity {
             attackArea.width = solidAreaWidth;
             attackArea.height = solidAreaHeight;
         } else if (characterClass.equals(gp.getClassMago())) {
-            //Fazer ataque do mago;
+            Projectile projectile = new Projectile(gp);
+
+            // Configura a posição inicial e direção do projétil
+            projectile.set(getX(), getY(), getDirection());
+
+            // Adiciona o projétil à lista de projéteis do jogo
+            gp.getProjectiles().add(projectile);
         }
     }
 

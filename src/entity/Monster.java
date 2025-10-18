@@ -17,7 +17,7 @@ public class Monster extends Entity{
         getMonsterImage();
 
         setSolidArea(new Rectangle(8,16,32,32));
-        setLife(3);
+        setLife(2);
     }
 
     public void takeDamage(int damage){

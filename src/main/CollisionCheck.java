@@ -64,30 +64,50 @@ public class CollisionCheck {
         }
     }
 
-    public int checkEntity(Entity entity, java.util.List<Monster> targets){
-        int index = -1;
-
-        for (int i=0;i<targets.size();i++){
+    public int checkPlayerAttack(Player player, java.util.List<Monster> targets) {
+        for (int i = 0; i < targets.size(); i++) {
             Monster target = targets.get(i);
 
-            entity.getSolidArea().x = entity.getX() + entity.getSolidArea().x;
-            entity.getSolidArea().y = entity.getY() + entity.getSolidArea().y;
+            Rectangle playerAttackArea = player.getAttackArea();
 
-            target.getSolidArea().x = target.getX() + target.getSolidArea().x;
-            target.getSolidArea().y = target.getY() + target.getSolidArea().y;
+            Rectangle targetSolidArea = new Rectangle(
+                    target.getX() + target.getSolidArea().x,
+                    target.getY() + target.getSolidArea().y,
+                    target.getSolidArea().width,
+                    target.getSolidArea().height
+            );
 
-            if(entity.getSolidArea().intersects(target.getSolidArea())){
-                entity.setColisionON(true);
-                index = i;
-                break;
+            if (playerAttackArea.intersects(targetSolidArea)) {
+                return i;
             }
-
-            entity.getSolidArea().x = 8;
-            entity.getSolidArea().y = 16;
-            target.getSolidArea().x = 0;
-            target.getSolidArea().y = 0;
         }
-        return  index;
+        return -1;
+    }
+
+    public int checkEntity(Entity entity, java.util.List<Monster> targets) {
+        for (int i = 0; i < targets.size(); i++) {
+            Monster target = targets.get(i);
+
+            // Área de colisão da entidade (ex: projétil)
+            Rectangle entityArea = new Rectangle(
+                    entity.getX() + entity.getSolidArea().x,
+                    entity.getY() + entity.getSolidArea().y,
+                    entity.getSolidArea().width,
+                    entity.getSolidArea().height
+            );
+            // Área de colisão do alvo (monstro)
+            Rectangle targetArea = new Rectangle(
+                    target.getX() + target.getSolidArea().x,
+                    target.getY() + target.getSolidArea().y,
+                    target.getSolidArea().width,
+                    target.getSolidArea().height
+            );
+
+            if (entityArea.intersects(targetArea)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public Monster checkPlayerMonsterCollision(Player player, java.util.List<Monster> monsters) {

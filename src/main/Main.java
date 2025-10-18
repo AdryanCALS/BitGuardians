@@ -18,7 +18,5 @@ public class Main {
         window.setVisible(true);
 
         painel.startThread();
-
     }
-
 }
