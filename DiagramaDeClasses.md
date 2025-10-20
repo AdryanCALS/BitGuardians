@@ -6,18 +6,15 @@ classDiagram
     }
 
     class GamePanel {
-        &lt;&lt;JPanel, Runnable&gt;&gt;
+        <<JPanel, Runnable>>
         -int tileSize
-        -int maxScreenCol
-        -int maxScreenRow
-        -int FPS
-        -Thread gameThread
         -Player player
-        -Monster monster
-        -KeyHandler keyHandler
+        -WaveManager waveManager
         -TileManager tileManager
         -CollisionCheck collisionCheck
+        -KeyHandler keyHandler
         -Hud hud
+        -List~Projectile~ projectiles
         +GamePanel()
         +startThread()
         +run()
@@ -26,93 +23,108 @@ classDiagram
     }
 
     class KeyHandler {
-        &lt;&lt;KeyListener&gt;&gt;
+        <<KeyListener>>
         +boolean upPressed
         +boolean downPressed
         +boolean leftPressed
         +boolean rightPressed
+        +boolean attackPressed
         +keyPressed(KeyEvent e)
         +keyReleased(KeyEvent e)
     }
 
     class Entity {
-        +int x
-        +int y
-        +int speed
-        +String direction
-        +BufferedImage up1, up2, down1, down2, left1, left2, right1, right2
-        +int spriteCounter
-        +int spriteNum
-        +Rectangle solidArea
-        +boolean colisionON
+        -int life
+        -int x, y
+        -int speed
+        -String direction
+        -Rectangle solidArea
+        +getLife()
+        +setLife(int)
+        +getX()
+        +getY()
     }
 
     class Player {
-        -GamePanel gp
-        -KeyHandler keyH
-        +Player(GamePanel gp, KeyHandler keyH)
-        +getPlayerImage()
-        +setDefaultValues()
+        -String characterClass
+        -Rectangle attackArea
+        -boolean attacking
+        +Player(GamePanel, KeyHandler)
+        +setCharacterClass(String)
+        +update()
+        +attack()
+        +draw(Graphics2D g2)
+    }
+    
+    class Monster {
+        +Monster(GamePanel, int, int)
+        +takeDamage(int)
         +update()
         +draw(Graphics2D g2)
     }
 
-    class Monster {
-        -GamePanel gp
-        +Monster(GamePanel gp)
-        +getMonsterImage()
-        +setDefaultValues()
+    class Projectile {
+        +Projectile(GamePanel)
+        +set(int, int, String)
         +update()
         +draw(Graphics2D g2)
     }
 
     class TileManager {
-        -GamePanel gp
-        +Tile[] tile
-        +int[][] mapTileNum
-        +TileManager(GamePanel gp)
-        +getTileImage()
+        -Tile[] tile
+        -int[][] mapTileNum
+        +TileManager(GamePanel)
         +loadMap()
         +draw(Graphics2D g2)
     }
 
     class Tile {
-        +BufferedImage image
-        +boolean colision
+        -BufferedImage image
+        -boolean colision
     }
 
     class CollisionCheck {
-        -GamePanel gp
-        +CollisionCheck(GamePanel gp)
-        +checkTile(Entity entity)
+        +checkTile(Entity)
+        +checkPlayerAttack(Player, List~Monster~)
+        +checkEntity(Entity, List~Monster~)
+        +checkPlayerMonsterCollision(Player, List~Monster~)
     }
 
-    class Hud {
-        -GamePanel gp
-        -int life
-        -int wave
-        -long lastDamageTime
-        -long cooldown
-        +Hud(GamePanel gp)
+    class WaveManager {
+        -List~Monster~ activeMonsters
+        -int currentWave
+        +WaveManager(GamePanel)
         +update()
-        +getLife()
-        +getWave()
+        +damageMonster(int, int)
+        +draw(Graphics2D g2)
+    }
+    
+    class Hud {
+      -int life
+      -int wave
+      +Hud(GamePanel)
+      +update()
     }
 
-    Main --&gt; GamePanel
-    GamePanel --o Player
-    GamePanel --o Monster
-    GamePanel --o KeyHandler
-    GamePanel --o TileManager
-    GamePanel --o CollisionCheck
-    GamePanel --o Hud
-    Player --|&gt; Entity
-    Monster --|&gt; Entity
-    Player ..&gt; KeyHandler
-    Player ..&gt; GamePanel
-    Monster ..&gt; GamePanel
-    TileManager ..&gt; GamePanel
-    CollisionCheck ..&gt; GamePanel
-    CollisionCheck ..&gt; Entity
-    Hud ..&gt; GamePanel
-    TileManager "1" --o "10" Tile
+    Main --> GamePanel : inicia
+    GamePanel "1" o-- "1" Player
+    GamePanel "1" o-- "1" WaveManager
+    GamePanel "1" o-- "1" TileManager
+    GamePanel "1" o-- "1" CollisionCheck
+    GamePanel "1" o-- "1" KeyHandler
+    GamePanel "1" o-- "1" Hud
+    GamePanel "1" *-- "0..*" Projectile
+
+    WaveManager "1" *-- "0..*" Monster 
+    TileManager "1" *-- "0..*" Tile
+
+    Player --|> Entity
+    Monster --|> Entity
+    Projectile --|> Entity
+
+    Player ..> KeyHandler
+    Player ..> CollisionCheck
+    Projectile ..> CollisionCheck
+    
+    GamePanel ..> Entity : gerencia entidades
+    Entity ..> GamePanel : interage com o painel
