@@ -69,7 +69,7 @@ O código-fonte está organizado nos seguintes pacotes:
 
 Desde o início do projeto queriamos construir algo mais dinâmico que mesmo assim mantesse a essência de um ``tower defense``. Para isso, fizemos com que o jogador pudesse controlar a sua "torre" (personagem jogável) para poder atacar os inimigos e impedi-los de chegar ao canto esquerdo da tela, de certa forma se assemelhando à [Plants vs Zombies](https://pt.wikipedia.org/wiki/Plants_vs._Zombies) porém com controle __dinâmico__ do player.
 
-O jogo não tem um tema em específico porém tem forte inspiração em elementos clássicos de `RPG` como as classes dos palyers e os monstros .
+O jogo não tem um tema em específico porém tem forte inspiração em elementos clássicos de `RPG` como as classes dos players e os monstros .
 
 
 ## UML - Diagrama de Classes
