@@ -5,12 +5,7 @@ import entity.Monster;
 import entity.Projectile;
 import tile.TileManager;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Font;
-import java.awt.FontMetrics;
+import java.awt.*;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -175,6 +170,13 @@ public class GamePanel extends JPanel implements Runnable{
             tileManager.draw(g2);
             player.draw(g2);
             waveManager.draw(g2);
+
+            // DEBUG: Desenha a área de ataque do Espadachim
+            if (player.isAttacking() && player.getCharacterClass().equals(classEspadachim)) {
+                Rectangle attackArea = player.getAttackArea();
+                g2.setColor(Color.RED); // Define uma cor de destaque
+                g2.drawRect(attackArea.x, attackArea.y, attackArea.width, attackArea.height);
+            }
 
             for (entity.Projectile p : projectiles) {
                 p.draw(g2);

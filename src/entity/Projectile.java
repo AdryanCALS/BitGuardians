@@ -16,7 +16,7 @@ public class Projectile extends Entity{
         setX(x);
         setY(y);
         setDirection(direction);
-        setSpeed(8);//possível modificar depois se a gente quiser
+        setSpeed(5);//possível modificar depois se a gente quiser
         setSolidArea(new Rectangle(0,0,gamePanel.getTileSize()/2, gamePanel.getTileSize()/2));
     }
 

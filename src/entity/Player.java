@@ -18,12 +18,16 @@ public class Player extends Entity {
     private KeyHandler keyH;
     private String characterClass;
 
+    //esses 2 aqui são long pq vão pegar hora em milisegundo
+    private long lastAttackTime = 0;
+    private long attackCooldown;
+
 
     public Player(GamePanel gp, KeyHandler keyH){
         this.gp = gp;
         this.keyH = keyH;
 
-        attackArea = new Rectangle(0,0,32,32);//possivel modificar a área de ataque
+        attackArea = new Rectangle(0,0,64,32);//possivel modificar a área de ataque
 
         //Define uma classe inicial e chama a inicialização para evitar NullPointerException.
         this.characterClass = gp.getClassEspadachim(); // Define Espadachim como padrão
@@ -33,8 +37,16 @@ public class Player extends Entity {
         setSolidArea(new Rectangle(8, 16, 32, 32));
     }
 
+    public boolean isAttacking(){
+        return attacking;
+    }
+
     public void setCharacterClass(String characterClass) {
         this.characterClass = characterClass;
+    }
+
+    public String getCharacterClass(){
+        return characterClass;
     }
 
     public Rectangle getAttackArea(){
@@ -68,6 +80,7 @@ public class Player extends Entity {
             e.printStackTrace();
         }
     }
+
     public void setDefaultValues(){
         setX(100);
         setY(300);
@@ -76,15 +89,17 @@ public class Player extends Entity {
         setLife(5);//dependendo da classe de jogador a vida seria diferente
 
         //  DEIXANDO AQUI PARA TALVEZ ADICIONAR DEPOIS
-        //if (characterClass.equals(gp.getClassEspadachim())) {
-          //  setSpeed(4);
-          //  setLife(5);
-       // } else if (characterClass.equals(gp.getClassMago())) {
-            //
-          //  setSpeed(3);
-          //  setLife(3);
-       // }
-   // }
+        // Adryan: boa ideia, vou usar e incluir cooldown diefrentes para cada classe ;)!
+        if (characterClass.equals(gp.getClassEspadachim())) {
+            setSpeed(4);
+            setLife(5);
+            attackCooldown = 100;
+        } else if (characterClass.equals(gp.getClassMago())) {
+            setSpeed(3);
+            setLife(3);
+            attackCooldown = 249;
+        }
+        lastAttackTime = 0;
     }
 
     public BufferedImage getDisplayImage() {
@@ -92,37 +107,16 @@ public class Player extends Entity {
     }
 
     public void update(){
-        if(attacking){
-            attackCounter++;
-
-            if(attackCounter >5 && attackCounter<10){
-                if (characterClass.equals(gp.getClassEspadachim())) {
-                    int monsterIndex = gp.getCollisionCheck().checkEntity(this, gp.getWaveManager().getActiveMonsters());
-                    if(monsterIndex != -1){
-                        gp.getWaveManager().damageMonster(monsterIndex, 1);
-                        attacking = false;
-                    }
-                } else if (characterClass.equals(gp.getClassMago())) {
-                    // terminar o ataque do mago (talvez projétil em área)
-                }
-            }
-
-            if(attackCounter>attackDuration){
-                attackCounter=0;
-                attacking=false;
-            }
-
-            return;
-        }
-
         Monster collidingMonster = gp.getCollisionCheck().checkPlayerMonsterCollision(this, gp.getWaveManager().getActiveMonsters());
         if (collidingMonster != null) {
-
+            //colisão com os montros
             int knockbackSpeed = 5;
             int dx = getX() - collidingMonster.getX();
             int dy = getY() - collidingMonster.getY();
 
             double distance = Math.sqrt(dx*dx + dy*dy);
+            if (distance == 0) distance = 1; // Evita divisão por zero
+
             double knockbackX = (dx / distance) * knockbackSpeed;
             double knockbackY = (dy / distance) * knockbackSpeed;
 
@@ -130,110 +124,111 @@ public class Player extends Entity {
             setY(getY() + (int)knockbackY);
         }
 
+        //usando if/else em uma linha(chique)
         if(keyH.isUpPressed() || keyH.isDownPressed() || keyH.isLeftPressed() || keyH.isRightPressed()){
-            if (keyH.isUpPressed()){
-                setDirection("up");
-            }
-            else if (keyH.isDownPressed()){
-                setDirection("down");
-            }
-            else if (keyH.isLeftPressed()){
-                setDirection("left");
-            }
-            else if (keyH.isRightPressed()){
-                setDirection("right");
-            }
+            if (keyH.isUpPressed()) setDirection("up");
+            else if (keyH.isDownPressed()) setDirection("down");
+            else if (keyH.isLeftPressed()) setDirection("left");
+            else if (keyH.isRightPressed()) setDirection("right");
 
             // VERIFICA A COLISÃO COM TILES
             setColisionON(false);
             gp.getCollisionCheck().checkTile(this);
 
-            //VERIFICA A COLISÃO COM MONSTROS
-
-            // SE NÃO HOUVER COLISÃO, O JOGADOR PODE SE MOVER
+            //verificação de colisão para deixar o jogador se mover
             if (!isColisionON()){
                 switch(getDirection()){
-                    case "up":
-                        // Adicionada verificação do limite superior da tela
-                        if (getY() - getSpeed() >= 0) {
-                            setY(getY() - getSpeed());
-                        }
-                        break;
-                    case "down":
-                        // Adicionada verificação do limite inferior da tela
-                        if (getY() - getSpeed() <= gp.getScreenHeight() - gp.getTileSize()) {
-                            setY(getY() + getSpeed());
-                        }
-                        break;
-                    case "left":
-                        // Adicionada verificação do limite esquerdo da tela
-                        if (getX() - getSpeed() >= 0) {
-                            setX(getX() - getSpeed());
-                        }
-                        break;
-                    case "right":
-                        // Adicionada verificação do limite direito da tela
-                        if (getX() + getSpeed() <= gp.getScreenWidth() - gp.getTileSize()) {
-                            setX(getX() + getSpeed());
-                        }
-                        break;
+                    case "up": if (getY() - getSpeed() >= 0) setY(getY() - getSpeed()); break;
+                    case "down": if (getY() + getSpeed() <= gp.getScreenHeight() - gp.getTileSize()) setY(getY() + getSpeed()); break;
+                    case "left": if (getX() - getSpeed() >= 0) setX(getX() - getSpeed()); break;
+                    case "right": if (getX() + getSpeed() <= gp.getScreenWidth() - gp.getTileSize()) setX(getX() + getSpeed()); break;
                 }
             }
 
-            // LÓGICA DE ANIMAÇÃO DO SPRITE
             setSpriteCounter(getSpriteCounter() + 1);
             if(getSpriteCounter() > 12){
-                if(getSpriteNum() == 1){
-                    setSpriteNum(2);
-                } else if (getSpriteNum() == 2) {
-                    setSpriteNum(1);
-                }
+                if(getSpriteNum() == 1) setSpriteNum(2);
+                else if (getSpriteNum() == 2) setSpriteNum(1);
                 setSpriteCounter(0);
             }
         }
 
+        //Parte do update para o atque
         if(keyH.isAttackPressed()){
             attack();
-            attacking=true;
             keyH.setAttackPressed(false);
+        }
+
+        // 4. ATUALIZA O ATAQUE (SE O ESPADACHIM ESTIVER ATACANDO)
+        if(attacking && characterClass.equals(gp.getClassEspadachim())){
+            attackCounter++;
+
+            int playerBodyX = getX() + getSolidArea().x;
+            int playerBodyY = getY() + getSolidArea().y;
+            switch (getDirection()){
+                case "up":
+                    attackArea.x = playerBodyX -16;
+                    attackArea.y = playerBodyY - attackArea.height;
+                    break;
+                case "down":
+                    attackArea.x = playerBodyX -16;
+                    attackArea.y = playerBodyY + getSolidArea().height;
+                    break;
+                case "left":
+                    attackArea.x = playerBodyX - attackArea.width;
+                    attackArea.y = playerBodyY -16;
+                    break;
+                case "right":
+                    attackArea.x = playerBodyX + getSolidArea().width;
+                    attackArea.y = playerBodyY -16;
+                    break;
+            }
+
+            // Verifica o acerto (no meio da animação)
+            if(attackCounter > 5 && attackCounter < 10){
+                int monsterIndex = gp.getCollisionCheck().checkPlayerAttack(this, gp.getWaveManager().getActiveMonsters());
+                if(monsterIndex != -1){
+                    gp.getWaveManager().damageMonster(monsterIndex, 1); // Causa 1 de dano
+                    // Para o ataque assim que acertar (evita multi-hit)
+                    attackCounter = 0;
+                    attacking = false;
+                }
+            }
+
+
+            if(attackCounter > attackDuration){
+                attackCounter = 0;
+                attacking = false;
+            }
         }
     }
 
     public void attack(){
-        if (characterClass.equals(gp.getClassEspadachim())) {
-            int currentX = getX();
-            int currentY = getY();
-            int solidAreaWidth = getSolidArea().width;
-            int solidAreaHeight = getSolidArea().height;
+        long currentTime = System.currentTimeMillis();
 
-            switch (getDirection()){
-                case "up":
-                    attackArea.x = currentX;
-                    attackArea.y = currentY - solidAreaHeight;
-                    break;
-                case "down":
-                    attackArea.x = currentX;
-                    attackArea.y = currentY + solidAreaHeight;
-                    break;
-                case "left":
-                    attackArea.x = currentX - solidAreaWidth;
-                    attackArea.y = currentY;
-                    break;
-                case "right":
-                    attackArea.x = currentX + solidAreaWidth;
-                    attackArea.y = currentY;
-                    break;
+        if(currentTime-lastAttackTime<attackCooldown){
+            return;
+        }
+
+        if (characterClass.equals(gp.getClassEspadachim())) {
+            // Só permite um novo ataque se não estiver atacando
+            if (!attacking) {
+                attacking = true;
+                attackCounter = 0;
+                lastAttackTime = currentTime;
             }
-            attackArea.width = solidAreaWidth;
-            attackArea.height = solidAreaHeight;
         } else if (characterClass.equals(gp.getClassMago())) {
             Projectile projectile = new Projectile(gp);
 
             // Configura a posição inicial e direção do projétil
-            projectile.set(getX(), getY(), getDirection());
+            int startX = getX() + (gp.getTileSize() / 4);
+            int startY = getY() + (gp.getTileSize() / 4);
+            projectile.set(startX, startY, getDirection());
 
             // Adiciona o projétil à lista de projéteis do jogo
             gp.getProjectiles().add(projectile);
+            //deixando o mago com cooldown pra balancear o jogo
+            lastAttackTime = currentTime;
         }
     }
 
