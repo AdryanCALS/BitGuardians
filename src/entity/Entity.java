@@ -8,6 +8,7 @@ public class Entity {
     private int x,y;
     private int speed;
     private BufferedImage up1,up2,down1,down2,left1,left2,right1,right2;
+    private BufferedImage attackUp1, attackUp2, attackDown1, attackDown2, attackLeft1, attackLeft2, attackRight1, attackRight2;
     private String direction;
 
     private int spriteCounter = 0;
@@ -46,6 +47,37 @@ public class Entity {
     public void setSpeed(int speed) {
         this.speed = speed;
     }
+
+    public BufferedImage getAttackUp1() { return attackUp1; }
+
+    public void setAttackUp1(BufferedImage attackUp1) { this.attackUp1 = attackUp1; }
+
+    public BufferedImage getAttackUp2() { return attackUp2; }
+
+    public void setAttackUp2(BufferedImage attackUp2) { this.attackUp2 = attackUp2; }
+
+    public BufferedImage getAttackDown1() { return attackDown1; }
+
+    public void setAttackDown1(BufferedImage attackDown1) { this.attackDown1 = attackDown1; }
+
+    public BufferedImage getAttackDown2() { return attackDown2; }
+    public void setAttackDown2(BufferedImage attackDown2) { this.attackDown2 = attackDown2; }
+
+    public BufferedImage getAttackLeft1() { return attackLeft1; }
+
+    public void setAttackLeft1(BufferedImage attackLeft1) { this.attackLeft1 = attackLeft1; }
+
+    public BufferedImage getAttackLeft2() { return attackLeft2; }
+
+    public void setAttackLeft2(BufferedImage attackLeft2) { this.attackLeft2 = attackLeft2; }
+
+    public BufferedImage getAttackRight1() { return attackRight1; }
+
+    public void setAttackRight1(BufferedImage attackRight1) { this.attackRight1 = attackRight1; }
+
+    public BufferedImage getAttackRight2() { return attackRight2; }
+
+    public void setAttackRight2(BufferedImage attackRight2) { this.attackRight2 = attackRight2; }
 
     public BufferedImage getUp1() {
         return up1;
@@ -151,3 +183,5 @@ public class Entity {
         this.colisionON = colisionON;
     }
 }
+
+

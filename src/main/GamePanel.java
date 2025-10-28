@@ -64,6 +64,10 @@ public class GamePanel extends JPanel implements Runnable{
         gameThread.start();
     }
 
+    public int getScale(){
+        return scale;
+    }
+
     @Override
     public void run () {
 
@@ -171,13 +175,6 @@ public class GamePanel extends JPanel implements Runnable{
             player.draw(g2);
             waveManager.draw(g2);
 
-            // DEBUG: Desenha a área de ataque do Espadachim
-            if (player.isAttacking() && player.getCharacterClass().equals(classEspadachim)) {
-                Rectangle attackArea = player.getAttackArea();
-                g2.setColor(Color.RED); // Define uma cor de destaque
-                g2.drawRect(attackArea.x, attackArea.y, attackArea.width, attackArea.height);
-            }
-
             for (entity.Projectile p : projectiles) {
                 p.draw(g2);
             }
@@ -226,7 +223,6 @@ public class GamePanel extends JPanel implements Runnable{
             g2.drawString(">", x - tileSize, y);
         }
     }
-
 
     public void drawCharacterMenu(Graphics2D g2) {
         g2.setColor(Color.black);
@@ -308,7 +304,6 @@ public class GamePanel extends JPanel implements Runnable{
         int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
         return (screenWidth - length) / 2;
     }
-
 
     public List<Projectile> getProjectiles() {
         return projectiles;
