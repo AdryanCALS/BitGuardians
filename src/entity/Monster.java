@@ -24,21 +24,15 @@ public class Monster extends Entity{
         setLife(2);
     }
 
-    public void takeDamage(int damage){
-        setLife(getLife()-damage);
+    public void takeDamage(int damage) {
+        setLife(getLife() - damage);
 
-        if(getLife()>0){
+        if (getLife() > 0) {
             takingDamage = true;
-            damageFlashCounter=0;
+            damageFlashCounter = 0;
             setSpeed(0);//hit-stun
         }
-
-        //provisorio enquanto não adicionamos moedas
-        if(getLife() <=0 ){
-            System.out.println("Monstro derrotado");
-        }
     }
-
     public void getMonsterImage() {
         try{
             setDown1(ImageIO.read(getClass().getResourceAsStream("/res/monster/MONdown1.png")));

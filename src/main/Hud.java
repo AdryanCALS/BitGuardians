@@ -4,6 +4,7 @@ public class Hud {
     private GamePanel gp;
     private int life = 5;
     private int wave = 1;
+    private int gold = 0;
     private boolean gameOverState = false;
 
 
@@ -14,7 +15,11 @@ public class Hud {
         this.gp = gp;
         System.out.println("Wave:"+ wave);
         System.out.println("Life:"+ life);
-
+        System.out.println("Gold:"+ gold);
+    }
+    public void addGold(int amount) {
+        gold += amount;
+        System.out.println("Gold:"+ gold);
     }
 
     public void update(){
@@ -39,7 +44,7 @@ public class Hud {
 
                         if (life <= 0 ){
                         life = 0;
-                        gameOverState = false; // (MUDAR PARA TRUE, ESTÁ FALSE PARA TESTAR
+                        gameOverState = true; // (MUDAR PARA TRUE, ESTÁ FALSE PARA TESTAR
                         System.out.println("====================");
                         System.out.println("     GAME OVER      ");
                         System.out.println("====================");
@@ -62,6 +67,8 @@ public class Hud {
     public int getWave() {
         return wave;
     }
+
+    public int getGold() { return gold; }
 
     public boolean GameOver() { return gameOverState; }
 

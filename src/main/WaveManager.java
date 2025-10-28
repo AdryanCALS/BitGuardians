@@ -52,6 +52,7 @@ public class WaveManager {
                 Monster monster = activeMonsters.get(index);
                 monster.takeDamage(damage);
                 if (monster.getLife() <= 0) {
+                    gp.getHud().addGold(1);
                     activeMonsters.remove(index);
                 }
             } catch (IndexOutOfBoundsException e) {
@@ -104,7 +105,7 @@ public class WaveManager {
     private void startNextWave() {
         if (gp.getHud().GameOver()) return;
 
-        monstersToSpawnInWave = 1 + (currentWave * 3);
+        monstersToSpawnInWave = 1 + (currentWave * 2);
         spawnedCount = 0;
         waveInProgress = true;
         lastSpawnTime = System.currentTimeMillis();
