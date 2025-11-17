@@ -4,6 +4,7 @@ import main.GamePanel;
 
 import java.awt.*;
 
+
 public class Projectile extends Entity{
     GamePanel gamePanel;
 
@@ -16,10 +17,11 @@ public class Projectile extends Entity{
         setX(x);
         setY(y);
         setDirection(direction);
-        setSpeed(5);//possível modificar depois se a gente quiser
+        setSpeed(5);
         setSolidArea(new Rectangle(0,0,gamePanel.getTileSize()/2, gamePanel.getTileSize()/2));
     }
 
+    @Override
     public void update(){
         switch (getDirection()){
             case "up":
@@ -37,7 +39,7 @@ public class Projectile extends Entity{
         }
 
         if(getX()<0 || getX()>gamePanel.getScreenWidth()||getY()<0||getY()> gamePanel.getScreenHeight()){
-            setLife(0);//para matar o projetil se ele sair da tela
+            setLife(0);
         }
 
         int monsterIndex = gamePanel.getCollisionCheck().checkEntity(this, gamePanel.getWaveManager().getActiveMonsters());
@@ -47,6 +49,8 @@ public class Projectile extends Entity{
         }
     }
 
+
+    @Override
     public void draw(Graphics2D graphics2D){
         graphics2D.setColor(new Color(150,0,255));
         graphics2D.fillOval(getX(),getY(),getSolidArea().width, getSolidArea().height);

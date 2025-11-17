@@ -8,11 +8,12 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+// Herda de Entity (que agora é abstrata)
 public class Monster extends Entity{
     private GamePanel gp;
     private boolean takingDamage = false;
     private int damageFlashCounter = 0;
-    private final int damageFlashDuration = 20; // Duração do "hit stun" em frames (0.5s @ 60FPS)
+    private final int damageFlashDuration = 20;
     private int originalSpeed;
 
     public Monster(GamePanel gp, int startX, int startY){
@@ -49,17 +50,16 @@ public class Monster extends Entity{
         originalSpeed = getSpeed();
     }
 
+    @Override
     public void update(){
         if (takingDamage) {
-            // Gerencia o estado "tomando dano"
             damageFlashCounter++;
             if (damageFlashCounter > damageFlashDuration) {
                 takingDamage = false;
                 damageFlashCounter = 0;
-                setSpeed(originalSpeed); // Restaura a velocidade
+                setSpeed(originalSpeed);
             }
         } else {
-            //movimento padrao
             if (getX() > 0) {
                 setX(getX() - getSpeed());
             } else{
@@ -69,20 +69,15 @@ public class Monster extends Entity{
         }
     }
 
+    @Override
     public void draw(Graphics2D g2) {
         BufferedImage image = getDown1();
         if (image != null) {
-
             if (takingDamage) {
-                // Lógica de piscar:
-                // (damageFlashCounter / X) % 2 == 0
-                // Isso faz: X frames ON, X frames OFF
                 if ((damageFlashCounter / 3) % 2 == 0) {
                     g2.drawImage(image, getX(), getY(), gp.getTileSize(), gp.getTileSize(), null);
                 }
-                // Se for ímpar, não desenha nada (efeito de piscar)
             } else {
-                // Desenho normal
                 g2.drawImage(image, getX(), getY(), gp.getTileSize(), gp.getTileSize(), null);
             }
         }

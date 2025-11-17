@@ -2,8 +2,10 @@ package entity;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.Graphics2D; // Importação necessária
 
-public class Entity {
+// 1. Tornada uma classe abstrata
+public abstract class Entity {
     private int life;
     private int x,y;
     private int speed;
@@ -16,6 +18,10 @@ public class Entity {
 
     private Rectangle solidArea;
     private boolean colisionON = false;
+
+    public abstract void update();
+
+    public abstract void draw(Graphics2D g2);
 
     public int getLife(){
         return life;
@@ -183,5 +189,3 @@ public class Entity {
         this.colisionON = colisionON;
     }
 }
-
-
