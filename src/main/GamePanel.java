@@ -30,6 +30,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int menuState = 0;
     public final int characterMenuState = 1;
     public final int playState = 3;
+    public final int gameOverState = 4;
     public int gameState;
     public int menuNum = 0;
     public int characterMenuNum = 0;
@@ -94,9 +95,16 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void update(){
         if ( gameState == playState){
+
+            hud.update();
+
+            if (hud.GameOver()) {
+                gameState = gameOverState;
+                return;
+            }
+
             player.update();
             waveManager.update();
-            hud.update();
             java.util.Iterator<entity.Projectile> iterator = projectiles.iterator();
             while (iterator.hasNext()) {
                 entity.Projectile p = iterator.next();
@@ -161,6 +169,9 @@ public class GamePanel extends JPanel implements Runnable{
                 gameState = playState;
                 keyHandler.setEnterPressed(false);
             }
+        }
+        else if (gameState == gameOverState) {
+            //o jogo para aqui
         }
     }
 

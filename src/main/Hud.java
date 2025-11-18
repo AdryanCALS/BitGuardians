@@ -44,7 +44,7 @@ public class Hud {
 
                         if (life <= 0 ){
                         life = 0;
-                        gameOverState = true; // (MUDAR PARA TRUE, ESTÁ FALSE PARA TESTAR
+                        gameOverState = false; // (MUDAR PARA TRUE, ESTÁ FALSE PARA TESTAR
                         System.out.println("====================");
                         System.out.println("     GAME OVER      ");
                         System.out.println("====================");
