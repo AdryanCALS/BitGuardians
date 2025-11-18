@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 
 // Herda de Entity (que agora é abstrata)
 public class Monster extends Entity{
-    private GamePanel gp;
+    protected GamePanel gp;
     private boolean takingDamage = false;
     private int damageFlashCounter = 0;
     private final int damageFlashDuration = 20;
@@ -22,7 +22,6 @@ public class Monster extends Entity{
         getMonsterImage();
 
         setSolidArea(new Rectangle(8,16,32,32));
-        setLife(2);
     }
 
     public void takeDamage(int damage) {
@@ -34,6 +33,18 @@ public class Monster extends Entity{
             setSpeed(0);//hit-stun
         }
     }
+
+    protected void setOriginalSpeed(int originalSpeed) {
+        this.originalSpeed = originalSpeed;
+    }
+
+    public boolean isTakingDamage() {
+        return takingDamage;
+    }
+    public int getDamageFlashCounter() {
+        return damageFlashCounter;
+    }
+
     public void getMonsterImage() {
         try{
             setDown1(ImageIO.read(getClass().getResourceAsStream("/res/monster/MONdown1.png")));
@@ -46,8 +57,8 @@ public class Monster extends Entity{
         setX(startX);
         setY(startY);
         setSpeed(2);
-
-        originalSpeed = getSpeed();
+        setLife(2);
+        setOriginalSpeed(getSpeed());
     }
 
     @Override

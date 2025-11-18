@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import entity.TankMonster;
+import entity.FastMonster;
 
 public class WaveManager {
 
@@ -116,7 +118,40 @@ public class WaveManager {
         int startY = spawnYPositions[spawnYIndex];
         int startX = gp.getScreenWidth() + gp.getTileSize();
 
-        Monster newMonster = new Monster(gp, startX, startY);
+        Monster newMonster;
+        int currentWave = getCurrentWave();
+
+        // Lógica de Permutação e Sorteio de Tipo de Monstro
+
+        int roll = random.nextInt(100); // Rola um número de 0 a 99
+
+        if (currentWave == 1) {
+            // Wave 1: Apenas Monster Base (100% de chance)
+            newMonster = new Monster(gp, startX, startY);
+        } else if (currentWave == 2) {
+            // Wave 2: Monster Base e Monster Rápido (Swift)
+            // (Exemplo: 70% Base, 30% Swift)
+            if (roll < 70) {
+                newMonster = new Monster(gp, startX, startY);
+            } else {
+                newMonster = new FastMonster(gp, startX, startY);
+            }
+        } else if (currentWave >= 3) {
+            // Wave 3+: Monster Base, Monster Rápido (Swift) e Monster Lento (Tank)
+            // (Exemplo: 40% Base, 40% Swift, 20% Tank)
+            if (roll < 40) {
+                newMonster = new Monster(gp, startX, startY);
+            } else if (roll < 80) { // 40 + 40 = 80
+                newMonster = new FastMonster(gp, startX, startY);
+            } else { // O restante (20%)
+                newMonster = new TankMonster(gp, startX, startY);
+            }
+        } else {
+            // Fallback para Monster Base
+            newMonster = new Monster(gp, startX, startY);
+        }
+
+
         activeMonsters.add(newMonster);
 
         spawnedCount++;
