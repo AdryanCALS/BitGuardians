@@ -15,6 +15,10 @@ public class Monster extends Entity{
     private int damageFlashCounter = 0;
     private final int damageFlashDuration = 20;
     private int originalSpeed;
+    private boolean isSlowed = false;
+    private int slowCounter = 0;
+    private final int slowDuration = 120; //podemos alterar depois.
+
 
     public Monster(GamePanel gp, int startX, int startY){
         this.gp = gp;
@@ -31,6 +35,13 @@ public class Monster extends Entity{
             takingDamage = true;
             damageFlashCounter = 0;
             setSpeed(0);//hit-stun
+        }
+    }
+
+    public void applySlow(){
+        if(!isSlowed){
+            isSlowed = true;
+            slowCounter=0;
         }
     }
 
@@ -68,14 +79,31 @@ public class Monster extends Entity{
             if (damageFlashCounter > damageFlashDuration) {
                 takingDamage = false;
                 damageFlashCounter = 0;
-                setSpeed(originalSpeed);
+                if(isSlowed){
+                    setSpeed(originalSpeed/2);
+                }else{
+                    setSpeed(originalSpeed);
+                }
             }
         } else {
+            if (isSlowed) {
+                setSpeed(originalSpeed / 2); // Reduz velocidade pela metade
+                slowCounter++;
+                if (slowCounter > slowDuration) {
+                    isSlowed = false;
+                    slowCounter = 0;
+                    setSpeed(originalSpeed);
+                }
+            } else {
+                setSpeed(originalSpeed);
+            }
+
             if (getX() > 0) {
                 setX(getX() - getSpeed());
-            } else{
+            } else {
                 setX(0);
-                setSpeed(2);
+                // Se chegou na base, reinicia
+                setX(gp.getScreenWidth()); // Apenas para evitar bugs visuais se não for destruído
             }
         }
     }
@@ -89,7 +117,13 @@ public class Monster extends Entity{
                     g2.drawImage(image, getX(), getY(), gp.getTileSize(), gp.getTileSize(), null);
                 }
             } else {
+                if(isSlowed){
+                    g2.setColor(new Color(0,100,255,50));
+                }
                 g2.drawImage(image, getX(), getY(), gp.getTileSize(), gp.getTileSize(), null);
+                if(isSlowed){
+                    g2.fillOval(getX(),getY()+20,32,10);
+                }
             }
         }
     }

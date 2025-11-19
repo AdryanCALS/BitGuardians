@@ -20,6 +20,9 @@ public class Player extends Entity {
     private String characterClass;
     private long lastAttackTime = 0;
     private long attackCooldown;
+    private int attackDamage = 1;
+    private boolean hasSlowEffect = false;
+    private int upgradeCost = 5; // vamos mudando depois
 
 
     public Player(GamePanel gp, KeyHandler keyH){
@@ -87,7 +90,7 @@ public class Player extends Entity {
         setX(100);
         setY(300);
         setSpeed(4);
-        setDirection("down"); // <-- Esta é a linha que corrige seu erro original
+        setDirection("down");
         setLife(5);
 
         if (characterClass.equals(gp.getClassEspadachim())) {
@@ -101,6 +104,42 @@ public class Player extends Entity {
             attackCooldown = 249;
         }
         lastAttackTime = 0;
+    }
+
+    public void upgradeDamage(){
+        if(gp.getHud().spendGold(upgradeCost)){
+            attackDamage++;
+            upgradeCost+=2;//podemos mudar posteriormente
+            System.out.println("Upgrade dano: novo dano = "+attackDamage);
+        }
+    }
+
+    public void upgradeAttackSpeed(){
+        if(gp.getHud().spendGold(upgradeCost)){
+            attackCooldown = (long)(attackCooldown*0.8);
+            upgradeCost +=2;
+            System.out.println("Upgrade Velocidade de ataque!");
+        }
+    }
+
+    public void upgradeSpecial(){
+        if (characterClass.equals(gp.getClassEspadachim())) {
+            if (gp.getHud().spendGold(upgradeCost)) {
+                setAttackArea(attackArea.width + 16, attackArea.height + 16);
+                upgradeCost += 2;
+                System.out.println("Upgrade Área: Nova Área = " + attackArea.width + "x" + attackArea.height);
+            }
+        } else if (characterClass.equals(gp.getClassMago())) {
+            if (!hasSlowEffect) { // Compra única para desbloquear o efeito
+                if (gp.getHud().spendGold(upgradeCost)) {
+                    hasSlowEffect = true;
+                    upgradeCost += 2;
+                    System.out.println("Upgrade Slow: Efeito de Gelo Ativado!");
+                }
+            } else {
+                System.out.println("Você já possui o efeito de Slow!");
+            }
+        }
     }
 
     public BufferedImage getDisplayImage() { return getDown1(); }
@@ -144,6 +183,19 @@ public class Player extends Entity {
             }
         }
 
+        if(keyH.isKey1Pressed()){
+            upgradeDamage();
+            keyH.setKey1Pressed(false);
+        }
+        if(keyH.isKey2Pressed()){
+            upgradeAttackSpeed();
+            keyH.setKey2Pressed(false);
+        }
+        if(keyH.isKey3Pressed()){
+            upgradeSpecial();
+            keyH.setKey3Pressed(false);
+        }
+
         if(keyH.isAttackPressed()){
             attack();
             keyH.setAttackPressed(false);
@@ -164,7 +216,7 @@ public class Player extends Entity {
                 if(attackCounter > 5 && attackCounter < 10){
                     int monsterIndex = gp.getCollisionCheck().checkPlayerAttack(this, gp.getWaveManager().getActiveMonsters());
                     if(monsterIndex != -1){
-                        gp.getWaveManager().damageMonster(monsterIndex, 1);
+                        gp.getWaveManager().damageMonster(monsterIndex, attackDamage);
                         attackCounter = 0;
                         attacking = false;
                     }
@@ -190,6 +242,7 @@ public class Player extends Entity {
         if (characterClass.equals(gp.getClassEspadachim())) {
         } else if (characterClass.equals(gp.getClassMago())) {
             Projectile projectile = new Projectile(gp);
+            projectile.setStats(attackDamage, hasSlowEffect);
             int startX = getX() + (gp.getTileSize() / 4);
             int startY = getY() + (gp.getTileSize() / 4);
             projectile.set(startX, startY, getDirection());

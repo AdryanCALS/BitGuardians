@@ -22,6 +22,17 @@ public class Hud {
         System.out.println("Gold:"+ gold);
     }
 
+    public boolean spendGold(int amount){
+        if(gold >= amount){
+            gold-=amount;
+            System.out.println("Upgrade realizado! Gold restante: "+gold);
+            return true;
+        }else{
+            System.out.println("Gold insuficiente!");
+            return false;
+        }
+    }
+
     public void update(){
         if (gameOverState) return;
 
