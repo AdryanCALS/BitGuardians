@@ -103,7 +103,7 @@ public class Monster extends Entity{
             } else {
                 setX(0);
                 // Se chegou na base, reinicia
-                setX(gp.getScreenWidth()); // Apenas para evitar bugs visuais se não for destruído
+                // Apenas para evitar bugs visuais se não for destruído
             }
         }
     }
