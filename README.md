@@ -55,6 +55,9 @@ Para compilar e rodar o projeto, você precisará ter o **JDK 17 ou superior** i
 | Mover para Direita| `D`            |
 | Atacar            | `Barra de Espaço` |
 | Confirmar (Menus) | `Enter`        |
+| Upgrade Dano      | `1`|
+| Upgrade Attack Speed|`2`|
+| Upgrade Especial|`3`|
 
 
 ## 📂 Estrutura do Projeto
@@ -70,6 +73,15 @@ O código-fonte está organizado nos seguintes pacotes:
 Desde o início do projeto queriamos construir algo mais dinâmico que mesmo assim mantesse a essência de um ``tower defense``. Para isso, fizemos com que o jogador pudesse controlar a sua "torre" (personagem jogável) para poder atacar os inimigos e impedi-los de chegar ao canto esquerdo da tela, de certa forma se assemelhando à [Plants vs Zombies](https://pt.wikipedia.org/wiki/Plants_vs._Zombies) porém com controle __dinâmico__ do player.
 
 O jogo não tem um tema em específico porém tem forte inspiração em elementos clássicos de `RPG` como as classes dos players e os monstros .
+
+Para o sistema de upgrades foram usados 3 upgrades principais, sendo 2 deles gerais e o último **específico** para cada classe, nesse caso o espadachim ganha um upgrade na sua ``área de ataque`` enquanto o mago ganha o efeito de ``slow`` nos seus projéteis.
+
+Os inimigos possuem **3** tipos principais:
+| Inimigo | Descrição |
+| -----------|---------------|
+| ``Básico`` | inimigo padrão e mais comum|
+| ``Rápido`` | inimigo mais veloz e com menos vida|
+| ``Tanque`` | inimigo mais lento e com mais vida |
 
 
 ## UML - Diagrama de Classes
