@@ -37,21 +37,25 @@ public class GamePanel extends JPanel implements Runnable{
 
     private TileManager tileManager;
     private KeyHandler keyHandler = new KeyHandler();
+    private MouseHandler mouseHandler = new MouseHandler();
     private Thread gameThread;
     private Player player;
     private WaveManager waveManager;
     private CollisionCheck collisionCheck;
     private Hud hud;
 
+
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.cyan);
         this.setDoubleBuffered(true);
         this.addKeyListener(keyHandler);
+        this.addMouseListener(mouseHandler);
+
         this.setFocusable(true);
         this.tileManager = new TileManager(this);
         this.collisionCheck = new CollisionCheck(this);
-        this.player = new Player(this, keyHandler);
+        this.player = new Player(this, keyHandler, mouseHandler);
         this.hud = new Hud(this);
         this.waveManager = new WaveManager(this);
 

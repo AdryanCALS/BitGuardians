@@ -2,6 +2,8 @@ package entity;
 
 import main.GamePanel;
 import main.KeyHandler;
+import main.MouseHandler;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -17,6 +19,7 @@ public class Player extends Entity {
     private boolean attacking = false;
     private GamePanel gp;
     private KeyHandler keyH;
+    private MouseHandler mouseHandler;
     private String characterClass;
     private long lastAttackTime = 0;
     private long attackCooldown;
@@ -25,12 +28,12 @@ public class Player extends Entity {
     private int upgradeCost = 5; // vamos mudando depois
 
 
-    public Player(GamePanel gp, KeyHandler keyH){
+    public Player(GamePanel gp, KeyHandler keyH, MouseHandler mouseHandler){
 
         this.gp = gp;
         this.keyH = keyH;
         this.characterClass = gp.getClassEspadachim();
-
+        this.mouseHandler = mouseHandler;
 
         setDefaultValues();
         getPlayerImage();
@@ -144,7 +147,6 @@ public class Player extends Entity {
 
     public BufferedImage getDisplayImage() { return getDown1(); }
 
-
     @Override
     public void update(){
         Monster collidingMonster = gp.getCollisionCheck().checkPlayerMonsterCollision(this, gp.getWaveManager().getActiveMonsters());
@@ -196,9 +198,16 @@ public class Player extends Entity {
             keyH.setKey3Pressed(false);
         }
 
-        if(keyH.isAttackPressed()){
-            attack();
-            keyH.setAttackPressed(false);
+        if(characterClass.equals(gp.getClassMago())){
+            if(mouseHandler.isMousePressed()){
+                attack();
+                mouseHandler.setMousePressed(false);
+            }
+        }else{
+            if(keyH.isAttackPressed() || mouseHandler.isMousePressed()){
+                attack();
+                keyH.setAttackPressed(false);
+            }
         }
 
         if(attacking){
@@ -245,7 +254,8 @@ public class Player extends Entity {
             projectile.setStats(attackDamage, hasSlowEffect);
             int startX = getX() + (gp.getTileSize() / 4);
             int startY = getY() + (gp.getTileSize() / 4);
-            projectile.set(startX, startY, getDirection());
+
+            projectile.setTarget(startX, startY, mouseHandler.getMouseX(), mouseHandler.getMouseY());
             gp.getProjectiles().add(projectile);
         }
     }
