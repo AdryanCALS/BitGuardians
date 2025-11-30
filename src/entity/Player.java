@@ -126,16 +126,17 @@ public class Player extends Entity {
 
     public void upgradeSpecial(){
         if (characterClass.equals(gp.getClassEspadachim())) {
-            if (gp.getHud().spendGold(upgradeCost) && upgradeNum<3) {
+            if (upgradeNum>=2) {
+                System.out.println("Upgrade maximo de area de ataque atingido! sua area de ataque é: " + attackArea.width + "x" + attackArea.height);
+            }else if (gp.getHud().spendGold(upgradeCost)) {
                 setAttackArea(attackArea.width + 16, attackArea.height + 16);
                 upgradeCost += 2;
                 System.out.println("Upgrade Área: Nova Área = "+ attackArea.width + "x" + attackArea.height );
                 upgradeNum++;
-            }else if (upgradeNum>=3){
-                System.out.println("Upgrade maximo de area de ataque atingido! sua area de ataque é: " + attackArea.width + "x" + attackArea.height);
             }else{
                 System.out.println("Gold insuficiente!");
             }
+
         } else if (characterClass.equals(gp.getClassMago())) {
             if (!hasSlowEffect) { // Compra única para desbloquear o efeito
                 if (gp.getHud().spendGold(upgradeCost)) {
