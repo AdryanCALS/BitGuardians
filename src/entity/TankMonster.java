@@ -1,8 +1,11 @@
 package entity;
 
 import main.GamePanel;
+
+import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.io.IOException;
 
 public class TankMonster extends Monster {
 
@@ -19,14 +22,18 @@ public class TankMonster extends Monster {
 
         setOriginalSpeed(getSpeed());
     }
-
+    @Override
+    public void getMonsterImage(){
+        try{
+            setDown1(ImageIO.read(getClass().getResourceAsStream("/res/monster/TankMONdown1.png")));
+            setDown2(ImageIO.read(getClass().getResourceAsStream("/res/monster/TankMONdown2.png")));
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
     // Opcional: Adiciona um filtro de cor para diferenciar visualmente (ex: Amarelo/Laranja)
     @Override
     public void draw(Graphics2D g2) {
-        super.draw(g2); // Desenha o sprite base
-        if (!isTakingDamage()) {
-            g2.setColor(new Color(255, 165, 0, 60)); // Filtro laranja claro
-            g2.fillRect(getX(), getY(), gp.getTileSize(), gp.getTileSize());
-        }
+        super.draw(g2);
     }
 }

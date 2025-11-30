@@ -59,6 +59,7 @@ public class Monster extends Entity{
     public void getMonsterImage() {
         try{
             setDown1(ImageIO.read(getClass().getResourceAsStream("/res/monster/MONdown1.png")));
+            setDown2(ImageIO.read(getClass().getResourceAsStream("/res/monster/MONdown2.png")));
         }catch(IOException e) {
             e.printStackTrace();
         }
@@ -74,6 +75,14 @@ public class Monster extends Entity{
 
     @Override
     public void update(){
+
+        setSpriteCounter(getSpriteCounter() + 1);
+        if(getSpriteCounter() > 12) { // Ajuste o 12 para mudar a velocidade da animação
+            if(getSpriteNum() == 1) setSpriteNum(2);
+            else if (getSpriteNum() == 2) setSpriteNum(1);
+            setSpriteCounter(0);
+        }
+
         if (takingDamage) {
             damageFlashCounter++;
             if (damageFlashCounter > damageFlashDuration) {
@@ -102,15 +111,17 @@ public class Monster extends Entity{
                 setX(getX() - getSpeed());
             } else {
                 setX(0);
-                // Se chegou na base, reinicia
-                // Apenas para evitar bugs visuais se não for destruído
             }
         }
     }
 
     @Override
     public void draw(Graphics2D g2) {
-        BufferedImage image = getDown1();
+
+        BufferedImage image = null;
+        if(getSpriteNum() ==1) image = getDown1();
+        if(getSpriteNum() ==2) image = getDown2();
+
         if (image != null) {
             if (takingDamage) {
                 if ((damageFlashCounter / 3) % 2 == 0) {
@@ -118,11 +129,11 @@ public class Monster extends Entity{
                 }
             } else {
                 if(isSlowed){
-                    g2.setColor(new Color(0,100,255,50));
+                    g2.setColor(new Color(0,100,255,100));
                 }
                 g2.drawImage(image, getX(), getY(), gp.getTileSize(), gp.getTileSize(), null);
                 if(isSlowed){
-                    g2.fillOval(getX(),getY()+20,32,10);
+                    g2.fillOval(getX(),getY(),48,48);
                 }
             }
         }

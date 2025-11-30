@@ -15,15 +15,15 @@ public class GamePanel extends JPanel implements Runnable{
     private final int scale = 3 ;
 
     private final int tileSize = originalSize * scale;
-    private int maxScreenCol = 16;
-    private int maxScreenRow = 9;
-    private int screenWidth = tileSize * maxScreenCol;
-    private int screenHeight = tileSize * maxScreenRow;
+    private final int maxScreenCol = 16;
+    private final int maxScreenRow = 9;
+    private final int screenWidth = tileSize * maxScreenCol;
+    private final int screenHeight = tileSize * maxScreenRow;
 
     private java.util.List<entity.Projectile> projectiles = new java.util.ArrayList<>();
 
     //FPS
-    private int FPS = 60;
+    private final int FPS = 60;
 
     public final String classEspadachim = "Espadachim";
     public final String classMago = "Mago";

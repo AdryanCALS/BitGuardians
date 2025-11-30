@@ -25,8 +25,9 @@ public class Player extends Entity {
     private long attackCooldown;
     private int attackDamage = 1;
     private boolean hasSlowEffect = false;
-    private int upgradeCost = 5; // vamos mudando depois
-
+    private int upgradeCost = 5;
+    private boolean moving = false;
+    int upgradeNum = 0;
 
     public Player(GamePanel gp, KeyHandler keyH, MouseHandler mouseHandler){
 
@@ -37,7 +38,6 @@ public class Player extends Entity {
 
         setDefaultValues();
         getPlayerImage();
-
 
         setSolidArea(new Rectangle(8, 16, 32, 32));
     }
@@ -52,33 +52,30 @@ public class Player extends Entity {
     public void getPlayerImage() {
         try {
             if (characterClass.equals(gp.getClassEspadachim())) {
-                setDown1(ImageIO.read(getClass().getResourceAsStream("/res/player/up1.png")));
-                setDown2(ImageIO.read(getClass().getResourceAsStream("/res/player/up2.png")));
+                setDown1(ImageIO.read(getClass().getResourceAsStream("/res/player/down1.png")));
+                setDown2(ImageIO.read(getClass().getResourceAsStream("/res/player/down2.png")));
                 setUp1(ImageIO.read(getClass().getResourceAsStream("/res/player/down1.png")));
                 setUp2(ImageIO.read(getClass().getResourceAsStream("/res/player/down2.png")));
                 setLeft1(ImageIO.read(getClass().getResourceAsStream("/res/player/left1.png")));
                 setLeft2(ImageIO.read(getClass().getResourceAsStream("/res/player/left2.png")));
                 setRight1(ImageIO.read(getClass().getResourceAsStream("/res/player/right1.png")));
                 setRight2(ImageIO.read(getClass().getResourceAsStream("/res/player/right2.png")));
+                setAttackRight1(ImageIO.read(getClass().getResourceAsStream("/res/player/attackright1.png")));
+                setAttackRight2(ImageIO.read(getClass().getResourceAsStream("/res/player/attackright2.png")));
+                setAttackLeft1(ImageIO.read(getClass().getResourceAsStream("/res/player/attackleft1.png")));
+                setAttackLeft2(ImageIO.read(getClass().getResourceAsStream("/res/player/attackleft2.png")));
+                setAttackUp1(ImageIO.read(getClass().getResourceAsStream("/res/player/attackup1.png")));
+                setAttackUp2(ImageIO.read(getClass().getResourceAsStream("/res/player/attackup2.png")));
+                setAttackDown1(ImageIO.read(getClass().getResourceAsStream("/res/player/attackdown1.png")));
+                setAttackDown2(ImageIO.read(getClass().getResourceAsStream("/res/player/attackdown2.png")));
+                setIdle1(ImageIO.read(getClass().getResourceAsStream("/res/player/idle1.png")));
+                setIdle2(ImageIO.read(getClass().getResourceAsStream("/res/player/idle2.png")));
 
             } else if (characterClass.equals(gp.getClassMago())) {
-                setUp1(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
-                setUp2(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
-                setDown1(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
-                setDown2(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
-                setLeft1(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
-                setLeft2(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
-                setRight1(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
-                setRight2(ImageIO.read(getClass().getResourceAsStream("/res/player/mageDown1.png")));
+                setIdle1(ImageIO.read(getClass().getResourceAsStream("/res/player/mageIdle1.png")));
+                setIdle2(ImageIO.read(getClass().getResourceAsStream("/res/player/mageIdle2.png")));
 
-                setAttackUp1(getUp1());
-                setAttackUp2(getUp1());
-                setAttackDown1(getDown1());
-                setAttackDown2(getDown1());
-                setAttackLeft1(getLeft1());
-                setAttackLeft2(getLeft1());
-                setAttackRight1(getRight1());
-                setAttackRight2(getRight1());
+                setUp1(getIdle1());
             }
         }catch(IOException e) {
             e.printStackTrace();
@@ -117,20 +114,27 @@ public class Player extends Entity {
         }
     }
 
-    public void upgradeAttackSpeed(){
-        if(gp.getHud().spendGold(upgradeCost)){
-            attackCooldown = (long)(attackCooldown*0.8);
+    public void upgradeSpeed(){
+        if(gp.getHud().spendGold(upgradeCost)&& upgradeNum<3){
+            setSpeed(getSpeed()+1);
             upgradeCost +=2;
-            System.out.println("Upgrade Velocidade de ataque!");
+            System.out.println("Upgrade Velocidade de movimento! a velocidade de movimento agora é: " + getSpeed());
+        }else{
+            System.out.println("Upgrade maximo de veolicade atingido! sua velocidade agora é: "+ getSpeed());
         }
     }
 
     public void upgradeSpecial(){
         if (characterClass.equals(gp.getClassEspadachim())) {
-            if (gp.getHud().spendGold(upgradeCost)) {
+            if (gp.getHud().spendGold(upgradeCost) && upgradeNum<3) {
                 setAttackArea(attackArea.width + 16, attackArea.height + 16);
                 upgradeCost += 2;
-                System.out.println("Upgrade Área: Nova Área = " + attackArea.width + "x" + attackArea.height);
+                System.out.println("Upgrade Área: Nova Área = "+ attackArea.width + "x" + attackArea.height );
+                upgradeNum++;
+            }else if (upgradeNum>=3){
+                System.out.println("Upgrade maximo de area de ataque atingido! sua area de ataque é: " + attackArea.width + "x" + attackArea.height);
+            }else{
+                System.out.println("Gold insuficiente!");
             }
         } else if (characterClass.equals(gp.getClassMago())) {
             if (!hasSlowEffect) { // Compra única para desbloquear o efeito
@@ -145,7 +149,7 @@ public class Player extends Entity {
         }
     }
 
-    public BufferedImage getDisplayImage() { return getDown1(); }
+    public BufferedImage getDisplayImage() { return getIdle1(); }
 
     @Override
     public void update(){
@@ -163,12 +167,16 @@ public class Player extends Entity {
         }
 
         if(keyH.isUpPressed() || keyH.isDownPressed() || keyH.isLeftPressed() || keyH.isRightPressed()){
+            moving = true; // Está se movendo
+
             if (keyH.isUpPressed()) setDirection("up");
             else if (keyH.isDownPressed()) setDirection("down");
             else if (keyH.isLeftPressed()) setDirection("left");
             else if (keyH.isRightPressed()) setDirection("right");
+
             setColisionON(false);
             gp.getCollisionCheck().checkTile(this);
+
             if (!isColisionON()){
                 switch(getDirection()){
                     case "up": if (getY() - getSpeed() >= 0) setY(getY() - getSpeed()); break;
@@ -177,12 +185,15 @@ public class Player extends Entity {
                     case "right": if (getX() + getSpeed() <= gp.getScreenWidth() - gp.getTileSize()) setX(getX() + getSpeed()); break;
                 }
             }
-            setSpriteCounter(getSpriteCounter() + 1);
-            if(getSpriteCounter() > 12){
-                if(getSpriteNum() == 1) setSpriteNum(2);
-                else if (getSpriteNum() == 2) setSpriteNum(1);
-                setSpriteCounter(0);
-            }
+        } else {
+            moving = false; // Parou
+        }
+
+        setSpriteCounter(getSpriteCounter() + 1);
+        if(getSpriteCounter() > 12) { // Ajuste esse 12 para mudar a velocidade da animação
+            if(getSpriteNum() == 1) setSpriteNum(2);
+            else if (getSpriteNum() == 2) setSpriteNum(1);
+            setSpriteCounter(0);
         }
 
         if(keyH.isKey1Pressed()){
@@ -190,7 +201,7 @@ public class Player extends Entity {
             keyH.setKey1Pressed(false);
         }
         if(keyH.isKey2Pressed()){
-            upgradeAttackSpeed();
+            upgradeSpeed();
             keyH.setKey2Pressed(false);
         }
         if(keyH.isKey3Pressed()){
@@ -214,13 +225,33 @@ public class Player extends Entity {
             attackCounter++;
             setSpriteCounter(getSpriteCounter()+1);
             if(characterClass.equals(gp.getClassEspadachim())){
-                int playerBodyX = getX() + getSolidArea().x;
-                int playerBodyY = getY() + getSolidArea().y;
+                // Pega as coordenadas e dimensões da área sólida (física) do player
+                int playerSolidX = getX() + getSolidArea().x;
+                int playerSolidY = getY() + getSolidArea().y;
+                int playerSolidW = getSolidArea().width;
+                int playerSolidH = getSolidArea().height;
+
                 switch (getDirection()){
-                    case "up": attackArea.x = playerBodyX -16; attackArea.y = playerBodyY - attackArea.height; break;
-                    case "down": attackArea.x = playerBodyX -16; attackArea.y = playerBodyY + getSolidArea().height; break;
-                    case "left": attackArea.x = playerBodyX - attackArea.width; attackArea.y = playerBodyY -16; break;
-                    case "right": attackArea.x = playerBodyX + getSolidArea().width; attackArea.y = playerBodyY -16; break;
+                    case "up":
+                        // Centraliza X: Posição X + (Metade do Player) - (Metade do Ataque)
+                        attackArea.x = playerSolidX + (playerSolidW - attackArea.width)/2;
+                        attackArea.y = playerSolidY - attackArea.height;
+                        break;
+                    case "down":
+                        // Centraliza X
+                        attackArea.x = playerSolidX + (playerSolidW - attackArea.width)/2;
+                        attackArea.y = playerSolidY + playerSolidH;
+                        break;
+                    case "left":
+                        attackArea.x = playerSolidX - attackArea.width;
+                        // Centraliza Y: Posição Y + (Metade do Player) - (Metade do Ataque)
+                        attackArea.y = playerSolidY + (playerSolidH - attackArea.height)/2;
+                        break;
+                    case "right":
+                        attackArea.x = playerSolidX + playerSolidW;
+                        // Centraliza Y
+                        attackArea.y = playerSolidY + (playerSolidH - attackArea.height)/2;
+                        break;
                 }
                 if(attackCounter > 5 && attackCounter < 10){
                     int monsterIndex = gp.getCollisionCheck().checkPlayerAttack(this, gp.getWaveManager().getActiveMonsters());
@@ -267,7 +298,6 @@ public class Player extends Entity {
         }
     }
 
-
     @Override
     public void draw(Graphics2D g2){
         BufferedImage image = null;
@@ -276,44 +306,106 @@ public class Player extends Entity {
         int width = gp.getTileSize();
         int height = gp.getTileSize();
 
+        // --- LÓGICA DE ATAQUE DO ESPADACHIM ---
         if (attacking && characterClass.equals(gp.getClassEspadachim())) {
+            int currentAttackSprite = (attackCounter < attackDuration / 2) ? 1 : 2;
+
             switch(getDirection()) {
-                case "up": if(getSpriteNum() == 1) image = getUp1(); if(getSpriteNum() == 2) image = getUp2(); break;
-                case "down": if(getSpriteNum() == 1) image = getDown1(); if(getSpriteNum() == 2) image = getDown2(); break;
-                case "left": if(getSpriteNum() == 1) image = getLeft1(); if(getSpriteNum() == 2) image = getLeft2(); break;
-                case "right": if(getSpriteNum() == 1) image = getRight1(); if(getSpriteNum() == 2) image = getRight2(); break;
+                case "up":
+                    image = (currentAttackSprite == 1) ? getAttackUp1() : getAttackUp2();
+                    break;
+                case "down":
+                    image = (currentAttackSprite == 1) ? getAttackDown1() : getAttackDown2();
+                    break;
+                case "left":
+                    image = (currentAttackSprite == 1) ? getAttackLeft1() : getAttackLeft2();
+                    break;
+                case "right":
+                    image = (currentAttackSprite == 1) ? getAttackRight1() : getAttackRight2();
+                    break;
             }
-            g2.drawImage(image, drawX, drawY, width, height, null);
-            g2.setColor(Color.RED);
-            g2.drawRect(attackArea.x, attackArea.y, attackArea.width, attackArea.height);
+
+            if(image != null) {
+                g2.drawImage(image, drawX, drawY, width, height, null);
+            }
+
+            // --- EFEITO VISUAL DE VENTO (SLASH) ---
+            Stroke oldStroke = g2.getStroke();
+            g2.setColor(new Color(200, 255, 255, 100));
+            g2.setStroke(new BasicStroke(3));
+
+            // Define o ângulo do arco baseado na direção
+            int visualX = attackArea.x;
+            int visualY = attackArea.y;
+            int overlap = 25;
+
+            int arcStart = 0;
+            switch(getDirection()) {
+                case "up":
+                    arcStart = 0; // Começa na direita (0) e gira anti-horário 180° = Semicírculo superior
+                    visualY += overlap; // Puxa para baixo (para dentro do player)
+                    break;
+                case "down":
+                    arcStart = 180; // Começa na esquerda (180) e gira 180° = Semicírculo inferior
+                    visualY = visualY-10-overlap; // Puxa para cima
+                    break;
+                case "left":
+                    arcStart = 90; // Começa em cima (90) e gira 180° = Semicírculo esquerdo
+                    visualX += overlap; // Puxa para a direita
+                    break;
+                case "right":
+                    arcStart = 270; // Começa em baixo (270) e gira 180° = Semicírculo direito
+                    visualX = visualX-5-overlap; // Puxa para a esquerda
+                    break;
+            }
+
+            g2.fillArc(visualX, visualY, attackArea.width, attackArea.height, arcStart, 180);
+
+            g2.setColor(Color.WHITE);
+            g2.drawArc(visualX, visualY, attackArea.width, attackArea.height, arcStart, 180);
+
+            g2.setStroke(oldStroke);
+
+            g2.setStroke(oldStroke);
+        }else if (characterClass.equals(gp.getClassMago())) {
+
+            // O Mago usa idle1 e idle2 para TUDO (andar, atacar, parado)
+            // Apenas alterna baseado no contador global de sprite
+            image = (getSpriteNum() == 1) ? getIdle1() : getIdle2();
+
+            // Desenha
+            if (image != null) {
+                g2.drawImage(image, drawX, drawY, width, height, null);
+            }
+
+            // ------------------------------------------
+            // 3. LÓGICA GENÉRICA / ESPADACHIM NORMAL
+            // ------------------------------------------
         } else {
-            if (attacking) {
-                int attackSpriteNum = (getSpriteCounter() > (attackDuration / 2)) ? 2 : 1;
-                switch(getDirection()) {
-                    case "up": image = (attackSpriteNum == 1) ? getAttackUp1() : getAttackUp2(); break;
-                    case "down": image = (attackSpriteNum == 1) ? getAttackDown1() : getAttackDown2(); break;
-                    case "left": image = (attackSpriteNum == 1) ? getAttackLeft1() : getAttackLeft2(); break;
-                    case "right": image = (attackSpriteNum == 1) ? getAttackRight1() : getAttackRight2(); break;
+            // Se estiver se movendo, usa sprites de direção
+            if (moving) {
+                switch (getDirection()) {
+                    case "up":
+                        image = (getSpriteNum() == 1) ? getUp1() : getUp2();
+                        break;
+                    case "down":
+                        image = (getSpriteNum() == 1) ? getDown1() : getDown2();
+                        break;
+                    case "left":
+                        image = (getSpriteNum() == 1) ? getLeft1() : getLeft2();
+                        break;
+                    case "right":
+                        image = (getSpriteNum() == 1) ? getRight1() : getRight2();
+                        break;
                 }
             } else {
-                switch(getDirection()) {
-                    case "up": if(getSpriteNum() == 1) image = getUp1(); if(getSpriteNum() == 2) image = getUp2(); break;
-                    case "down": if(getSpriteNum() == 1) image = getDown1(); if(getSpriteNum() == 2) image = getDown2(); break;
-                    case "left": if(getSpriteNum() == 1) image = getLeft1(); if(getSpriteNum() == 2) image = getLeft2(); break;
-                    case "right": if(getSpriteNum() == 1) image = getRight1(); if(getSpriteNum() == 2) image = getRight2(); break;
-                }
+                // Se parado, usa Idle
+                image = (getSpriteNum() == 1) ? getIdle1() : getIdle2();
             }
-            if (attacking && image != null) {
-                width = image.getWidth() * gp.getScale();
-                height = image.getHeight() * gp.getScale();
-                switch (getDirection()) {
-                    case "up": drawY = getY() - (height - gp.getTileSize()); break;
-                    case "left": drawX = getX() - (width - gp.getTileSize()); break;
-                    case "down": break;
-                    case "right": break;
-                }
+
+            if (image != null) {
+                g2.drawImage(image, drawX, drawY, width, height, null);
             }
-            g2.drawImage(image, drawX, drawY, width, height, null);
         }
     }
 }

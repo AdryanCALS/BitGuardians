@@ -40,14 +40,6 @@ public class Projectile extends Entity{
         this.velocityX = getSpeed() * Math.cos(angle);
         this.velocityY = getSpeed() * Math.sin(angle);
     }
-//já testei com e sem esse método e o erro persiste
-//    public void set(int x, int y, String direction){
-//        setX(x);
-//        setY(y);
-//        setDirection(direction);
-//        setSpeed(5);
-//        setSolidArea(new Rectangle(0,0,gamePanel.getTileSize()/2, gamePanel.getTileSize()/2));
-//    }
 
     @Override
     public void update(){
@@ -93,7 +85,7 @@ public class Projectile extends Entity{
 
     @Override
     public void draw(Graphics2D graphics2D){
-        if(hasSlowEffect)graphics2D.setColor(Color.cyan);
+        if(hasSlowEffect)graphics2D.setColor(new Color(80,119,181));
         else graphics2D.setColor(new Color(150,0,255));
 
         graphics2D.fillOval(getX(),getY(),getSolidArea().width, getSolidArea().height);

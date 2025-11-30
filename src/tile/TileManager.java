@@ -4,15 +4,19 @@ import main.GamePanel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Objects;
+
 
 public class TileManager {
     private GamePanel gp;
     private Tile[] tile;
     private int[][] mapTileNum;
+    BufferedImage background;
 
     public TileManager(GamePanel gp){
         this.gp = gp;
@@ -26,6 +30,7 @@ public class TileManager {
 
     public void getTileImage(){
         try{
+            background = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/tiles/background.png")));
 
             tile[0]= new Tile();
             tile[0].setImage(ImageIO.read(getClass().getResourceAsStream("/res/tiles/floor01.png")));
@@ -86,20 +91,29 @@ public class TileManager {
             e.printStackTrace();
         }
     }
+
     public void draw(Graphics2D g2){
+        if (background != null) {
+            g2.drawImage(background, 0, 0, gp.getScreenWidth(), gp.getScreenHeight(), null);
+        }
+
         int col = 0;
         int row = 0;
         int x = 0;
         int y = 0;
 
         while(col<gp.getMaxScreenCol() && row < gp.getMaxScreenRow()){
-
             int tileNum = mapTileNum[col][row];
 
-            g2.drawImage(tile[tileNum].getImage(), x, y, gp.getTileSize(), gp.getTileSize(),null);
+            // 2. MODIFICAÇÃO: PULAR O DESENHO DO TILE DE CÉU ANTIGO
+            // Se o tile for 6 (céu), nós NÃO desenhamos ele, para que o background apareça.
+            if (tileNum != 6 && tileNum != 3) {
+                g2.drawImage(tile[tileNum].getImage(), x, y, gp.getTileSize(), gp.getTileSize(), null);
+            }
+
             col++;
-            x+=gp.getTileSize();
-            if(col == gp.getMaxScreenCol()){
+            x += gp.getTileSize();
+            if(col == gp.getMaxScreenCol()) {
                 col = 0;
                 x = 0;
                 row++;

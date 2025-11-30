@@ -11,6 +11,7 @@ public abstract class Entity {
     private int speed;
     private BufferedImage up1,up2,down1,down2,left1,left2,right1,right2;
     private BufferedImage attackUp1, attackUp2, attackDown1, attackDown2, attackLeft1, attackLeft2, attackRight1, attackRight2;
+    private BufferedImage idle1, idle2;
     private String direction;
 
     private int spriteCounter = 0;
@@ -55,6 +56,14 @@ public abstract class Entity {
     }
 
     public BufferedImage getAttackUp1() { return attackUp1; }
+
+    public void setIdle1(BufferedImage idle1) { this.idle1 = idle1; }
+
+    public BufferedImage getIdle1() { return idle1; }
+
+    public void setIdle2(BufferedImage idle2) { this.idle2 = idle2; }
+
+    public BufferedImage getIdle2() { return idle2; }
 
     public void setAttackUp1(BufferedImage attackUp1) { this.attackUp1 = attackUp1; }
 
