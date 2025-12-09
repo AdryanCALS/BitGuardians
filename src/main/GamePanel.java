@@ -113,7 +113,7 @@ public class GamePanel extends JPanel implements Runnable{
             while (iterator.hasNext()) {
                 entity.Projectile p = iterator.next();
                 if (p.getLife() <= 0) {
-                    iterator.remove(); // Maneira segura de remover itens durante a iteração
+                    iterator.remove(); // maneira segura de remover itens durante a iteração
                 } else {
                     p.update();
                 }

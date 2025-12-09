@@ -58,7 +58,7 @@ public class WaveManager {
                     activeMonsters.remove(index);
                 }
             } catch (IndexOutOfBoundsException e) {
-                // Ignora o erro, pois o monstro pode já ter sido removido por outro processo
+
             }
         }
     }
@@ -121,33 +121,30 @@ public class WaveManager {
         Monster newMonster;
         int currentWave = getCurrentWave();
 
-        // Lógica de Permutação e Sorteio de Tipo de Monstro
+        // randomização do tipo de monstro
 
-        int roll = random.nextInt(100); // Rola um número de 0 a 99
+        int roll = random.nextInt(100); // rola um número de 0 a 99
 
         if (currentWave == 1) {
-            // Wave 1: Apenas Monster Base (100% de chance)
+            // Wave 1: apenas o monstro básico
             newMonster = new Monster(gp, startX, startY);
         } else if (currentWave == 2) {
-            // Wave 2: Monster Base e Monster Rápido (Swift)
-            // (Exemplo: 70% Base, 30% Swift)
+            // Wave 2: adiciona o monstro rápido
             if (roll < 70) {
                 newMonster = new Monster(gp, startX, startY);
             } else {
                 newMonster = new FastMonster(gp, startX, startY);
             }
         } else if (currentWave >= 3) {
-            // Wave 3+: Monster Base, Monster Rápido (Swift) e Monster Lento (Tank)
-            // (Exemplo: 40% Base, 40% Swift, 20% Tank)
+            // Wave 3+: adiciona o monstro tank
             if (roll < 40) {
                 newMonster = new Monster(gp, startX, startY);
-            } else if (roll < 80) { // 40 + 40 = 80
+            } else if (roll < 80) {
                 newMonster = new FastMonster(gp, startX, startY);
-            } else { // O restante (20%)
+            } else {
                 newMonster = new TankMonster(gp, startX, startY);
             }
         } else {
-            // Fallback para Monster Base
             newMonster = new Monster(gp, startX, startY);
         }
 

@@ -31,7 +31,7 @@ public class TankMonster extends Monster {
             e.printStackTrace();
         }
     }
-    // Opcional: Adiciona um filtro de cor para diferenciar visualmente (ex: Amarelo/Laranja)
+    // adiciona um filtro de cor para diferenciar
     @Override
     public void draw(Graphics2D g2) {
         super.draw(g2);

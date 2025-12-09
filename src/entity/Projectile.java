@@ -31,7 +31,7 @@ public class Projectile extends Entity{
         setSpeed(5);
         setSolidArea(new Rectangle(0,0,gamePanel.getTileSize()/2,gamePanel.getTileSize()/2));
 
-        //aloo Renatokkk
+        //aloo Renatokkk (KKKKKKKKKKK)
         double deltaX = targetX - startX;
         double deltaY = targetY - startY;
 
@@ -55,7 +55,7 @@ public class Projectile extends Entity{
             setLife(0);
         }
 
-        // Verifica colisão
+        // verifica colisão
         int monsterIndex = gamePanel.getCollisionCheck().checkEntity(this, gamePanel.getWaveManager().getActiveMonsters());
 
         if(monsterIndex != -1){
@@ -69,15 +69,13 @@ public class Projectile extends Entity{
                     target.applySlow();
                 }
 
-                // Aplica o dano (o método damageMonster já tem proteção interna, mas estamos protegendo o acesso acima)
                 gamePanel.getWaveManager().damageMonster(monsterIndex, damage);
 
             } catch (IndexOutOfBoundsException e) {
-                // Se o monstro não existe mais (índice inválido), apenas ignoramos.
                 System.out.println("Monstro removido antes do impacto do projétil.");
             }
 
-            // Independente de acertar ou dar erro, o projétil deve ser destruído ao bater em algo
+            // independente de acertar ou dar erro, o projétil deve ser destruído ao bater em algo
             setLife(0);
         }
     }

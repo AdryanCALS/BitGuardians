@@ -8,7 +8,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-// Herda de Entity (que agora é abstrata)
 public class Monster extends Entity{
     protected GamePanel gp;
     private boolean takingDamage = false;
@@ -49,13 +48,6 @@ public class Monster extends Entity{
         this.originalSpeed = originalSpeed;
     }
 
-    public boolean isTakingDamage() {
-        return takingDamage;
-    }
-    public int getDamageFlashCounter() {
-        return damageFlashCounter;
-    }
-
     public void getMonsterImage() {
         try{
             setDown1(ImageIO.read(getClass().getResourceAsStream("/res/monster/MONdown1.png")));
@@ -77,7 +69,7 @@ public class Monster extends Entity{
     public void update(){
 
         setSpriteCounter(getSpriteCounter() + 1);
-        if(getSpriteCounter() > 12) { // Ajuste o 12 para mudar a velocidade da animação
+        if(getSpriteCounter() > 12) { // ajustar para mudar a velocidade da animação
             if(getSpriteNum() == 1) setSpriteNum(2);
             else if (getSpriteNum() == 2) setSpriteNum(1);
             setSpriteCounter(0);
@@ -96,7 +88,7 @@ public class Monster extends Entity{
             }
         } else {
             if (isSlowed) {
-                setSpeed(originalSpeed / 2); // Reduz velocidade pela metade
+                setSpeed(originalSpeed / 2); // reduz velocidade pela metade
                 slowCounter++;
                 if (slowCounter > slowDuration) {
                     isSlowed = false;

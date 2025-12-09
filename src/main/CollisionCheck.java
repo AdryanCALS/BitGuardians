@@ -88,14 +88,14 @@ public class CollisionCheck {
         for (int i = 0; i < targets.size(); i++) {
             Monster target = targets.get(i);
 
-            // Área de colisão da entidade (ex: projétil)
+            // área de colisão da entidade
             Rectangle entityArea = new Rectangle(
                     entity.getX() + entity.getSolidArea().x,
                     entity.getY() + entity.getSolidArea().y,
                     entity.getSolidArea().width,
                     entity.getSolidArea().height
             );
-            // Área de colisão do alvo (monstro)
+            // área de colisão do alvo
             Rectangle targetArea = new Rectangle(
                     target.getX() + target.getSolidArea().x,
                     target.getY() + target.getSolidArea().y,
@@ -127,9 +127,9 @@ public class CollisionCheck {
 
             if (playerArea.intersects(monsterArea)) {
                 player.setColisionON(true);
-                return monster; // Retorna o monstro com o qual colidiu
+                return monster; // retorna o monstro com o qual colidiu
             }
         }
-        return null; // Retorna null se não houver colisão
+        return null; // retorna null se não houver colisão
     }
 }

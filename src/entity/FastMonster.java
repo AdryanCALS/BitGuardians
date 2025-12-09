@@ -27,14 +27,13 @@ public class FastMonster extends Monster {
     @Override
     public void getMonsterImage(){
         try{
-            //o requireNonNull é para controle de exceções
             setDown1(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/monster/FastMONdown1.png"))));
             setDown2(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/monster/FastMONdown2.png"))));
         }catch(IOException e) {
             e.printStackTrace();
         }
     }
-    // Opcional: Adiciona um filtro de cor para diferenciar visualmente
+    // adiciona um filtro para diferenciar os monstros
     @Override
     public void draw(Graphics2D g2) {
         super.draw(g2);

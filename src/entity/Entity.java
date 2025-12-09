@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D; // Importação necessária
 
-// 1. Tornada uma classe abstrata
 public abstract class Entity {
     private int life;
     private int x,y;

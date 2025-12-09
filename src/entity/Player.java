@@ -22,19 +22,17 @@ public class Player extends Entity {
     private long lastAttackTime = 0;
     private long attackCooldown;
 
-    // --- VARIÁVEIS DE UPGRADE ---
+    // variaveis de upgrade
     private int attackDamage = 1;
     private boolean hasSlowEffect = false;
     private boolean moving = false;
 
-    // Custos
+    // variaveis de custo
     private int damageCost = 5;
     private int speedCost = 5;
     private int specialCost = 5;
-
-    // Níveis separados para evitar conflitos
-    private int speedLevel = 0; // Novo controle exclusivo para velocidade
-    private int upgradeNum = 0; // Mantido para o Especial do Espadachim (Área)
+    private int speedLevel = 0;
+    private int upgradeNum = 0;
 
     public Player(GamePanel gp, KeyHandler keyH, MouseHandler mouseHandler) {
         this.gp = gp;
@@ -53,13 +51,12 @@ public class Player extends Entity {
     public String getCharacterClass() { return characterClass; }
     public Rectangle getAttackArea() { return attackArea; }
 
-    // --- GETTERS PARA O HUD ---
+    // getter para o hud
     public int getDamageCost() { return damageCost; }
     public int getSpeedCost() { return speedCost; }
     public int getSpecialCost() { return specialCost; }
 
     public boolean isSpeedMaxed() {
-        // Agora verifica a variável correta
         return speedLevel >= 3;
     }
 
@@ -71,7 +68,6 @@ public class Player extends Entity {
         }
         return false;
     }
-    // -------------------------
 
     public void setDefaultValues() {
         setX(100);
@@ -80,19 +76,15 @@ public class Player extends Entity {
         setDirection("down");
         setLife(5);
 
-        // --- RESET COMPLETO (CORRIGIDO) ---
         attackDamage = 1;
         hasSlowEffect = false;
 
-        // Reseta os níveis
         upgradeNum = 0;
         speedLevel = 0;
 
-        // Reseta os custos
         damageCost = 5;
         speedCost = 5;
         specialCost = 5;
-        // ----------------------------------
 
         if (characterClass.equals(gp.getClassEspadachim())) {
             setAttackArea(64, 64);
@@ -111,53 +103,31 @@ public class Player extends Entity {
         if (gp.getHud().spendGold(damageCost)) {
             attackDamage++;
             damageCost += 2;
-            System.out.println("Upgrade dano: novo dano = " + attackDamage);
         }
     }
 
     public void upgradeSpeed() {
-        // Verifica se speedLevel é menor que 3 (0, 1, 2)
         if (gp.getHud().spendGold(speedCost) && speedLevel < 3) {
             setSpeed(getSpeed() + 1);
             speedCost += 2;
-
-            // IMPORTANTE: Incrementa o nível!
             speedLevel++;
-
-            System.out.println("Upgrade Velocidade! Nível: " + speedLevel + " | Nova velocidade: " + getSpeed());
-        } else {
-            System.out.println("Upgrade máximo de velocidade atingido!");
         }
     }
 
     public void upgradeSpecial() {
         if (characterClass.equals(gp.getClassEspadachim())) {
-            if (upgradeNum >= 2) {
-                System.out.println("Upgrade máximo de área atingido!");
-            } else if (gp.getHud().spendGold(specialCost)) {
+            if (upgradeNum < 2 && gp.getHud().spendGold(specialCost)) {
                 setAttackArea(attackArea.width + 16, attackArea.height + 16);
                 specialCost += 2;
-                System.out.println("Upgrade Área: Nova Área = " + attackArea.width + "x" + attackArea.height);
-                upgradeNum++; // Incrementa contador do especial
-            } else {
-                System.out.println("Gold insuficiente!");
+                upgradeNum++;
             }
-
         } else if (characterClass.equals(gp.getClassMago())) {
-            if (!hasSlowEffect) {
-                if (gp.getHud().spendGold(specialCost)) {
-                    hasSlowEffect = true;
-                    specialCost += 2;
-                    System.out.println("Upgrade Slow: Efeito de Gelo Ativado!");
-                }
-            } else {
-                System.out.println("Você já possui o efeito de Slow!");
+            if (!hasSlowEffect && gp.getHud().spendGold(specialCost)) {
+                hasSlowEffect = true;
+                specialCost += 2;
             }
         }
     }
-
-    // --- MÉTODOS DE IMAGEM, UPDATE E DRAW (INALTERADOS) ---
-    // Mantenha o restante do código igual ao que você já tem.
 
     public void getPlayerImage() {
         try {
@@ -312,13 +282,6 @@ public class Player extends Entity {
             int startY = getY() + (gp.getTileSize() / 4);
             projectile.setTarget(startX, startY, mouseHandler.getMouseX(), mouseHandler.getMouseY());
             gp.getProjectiles().add(projectile);
-        }
-    }
-
-    public void takeDamage(int damage) {
-        setLife(getLife() - damage);
-        if (getLife() <= 0) {
-            System.out.println("Game over!");
         }
     }
 

@@ -126,8 +126,5 @@ public class Hud {
         }
     }
 
-    public int getLife() { return life; }
-    public int getWave() { return wave; }
-    public int getGold() { return gold; }
     public boolean GameOver() { return gameOverState; }
 }
