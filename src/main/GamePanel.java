@@ -461,5 +461,6 @@ public class GamePanel extends JPanel implements Runnable{
         return waveManager;
     }
 
+    public Player getPlayer() { return player; }
 
 }
