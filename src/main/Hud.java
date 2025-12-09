@@ -1,5 +1,9 @@
 package main;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+
 public class Hud {
     private GamePanel gp;
     private int life = 5;
@@ -7,28 +11,27 @@ public class Hud {
     private int gold = 0;
     private boolean gameOverState = false;
 
+    // Fonte salva em memória para evitar recriação constante (Eficiência)
+    private Font hudFont;
 
     private long lastDamageTime = 0;
     private final long cooldown = 1000;
 
     public Hud (GamePanel gp){
         this.gp = gp;
-        System.out.println("Wave:"+ wave);
-        System.out.println("Life:"+ life);
-        System.out.println("Gold:"+ gold);
+        // Instancia a fonte apenas uma vez
+        hudFont = new Font("Arial", Font.BOLD, 20);
     }
+
     public void addGold(int amount) {
         gold += amount;
-        System.out.println("Gold:"+ gold);
     }
 
     public boolean spendGold(int amount){
         if(gold >= amount){
-            gold-=amount;
-            System.out.println("Upgrade realizado! Gold restante: "+gold);
+            gold -= amount;
             return true;
-        }else{
-            System.out.println("Gold insuficiente!");
+        } else {
             return false;
         }
     }
@@ -41,43 +44,43 @@ public class Hud {
         if (danoRecebido > 0){
             long currentTime = System.currentTimeMillis();
 
-
             if ((currentTime - lastDamageTime) > cooldown && life > 0) {
                 life -= danoRecebido;
                 lastDamageTime = currentTime;
 
-                System.out.println("Wave:"+ wave);
-                System.out.println("Life:"+ life);
-
                 if (life <= 0 ){
                     life = 0;
-
-                        if (life <= 0 ){
-                        life = 0;
-                        gameOverState = true; // (MUDAR PARA TRUE, ESTÁ FALSE PARA TESTAR
-
-                    }
+                    gameOverState = true;
                 }
-
             }
         }
+
+        // Atualiza a wave visual
         int currentWaveManagerWave = gp.getWaveManager().getCurrentWave();
         if (wave != currentWaveManagerWave) {
             wave = currentWaveManagerWave;
-            System.out.println("Wave:"+ wave);
         }
     }
 
-    public int getLife() {
-        return life;
+    public void draw(Graphics2D g2) {
+        // se estivermos no menu principal ou seleção, talvez não queira desenhar,
+        // mas como esses menus desenham um fundo preto por cima, não há problema em desenhar aqui.
+
+        g2.setFont(hudFont);
+        g2.setColor(Color.WHITE);
+
+        // posicionamento no canto superior esquerdo
+        int x = 20;
+        int y = 40;
+        int lineHeight = 25;
+
+        g2.drawString("Wave: " + wave, x, y);
+        g2.drawString("Life: " + life, x, y + lineHeight);
+        g2.drawString("Gold: " + gold, x, y + lineHeight * 2);
     }
 
-    public int getWave() {
-        return wave;
-    }
-
+    public int getLife() { return life; }
+    public int getWave() { return wave; }
     public int getGold() { return gold; }
-
     public boolean GameOver() { return gameOverState; }
-
 }

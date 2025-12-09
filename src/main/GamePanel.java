@@ -22,7 +22,6 @@ public class GamePanel extends JPanel implements Runnable{
 
     private java.util.List<entity.Projectile> projectiles = new java.util.ArrayList<>();
 
-    //FPS
     private final int FPS = 60;
 
     public final String classEspadachim = "Espadachim";
@@ -196,7 +195,7 @@ public class GamePanel extends JPanel implements Runnable{
             if (keyHandler.isEnterPressed()) {
                 if (gameOverNum == 0) {
                     gameState = menuState;
-                    retry(); // Reseta o jogo
+                    retry(); // reseta o jogo
                 } else if (gameOverNum == 1) {
                     System.exit(0);
                 }
@@ -209,14 +208,11 @@ public class GamePanel extends JPanel implements Runnable{
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
 
-        // 1. Se estiver no Menu Principal, desenha APENAS o menu (fundo preto)
         if (gameState == menuState) {
             drawMenu(g2);
         }
-        // 2. Para qualquer outro estado (Jogando, Escolhendo Personagem ou Game Over)
-        // nós queremos ver o cenário do jogo ao fundo.
         else {
-            // --- Desenha o Mundo do Jogo (Fundo) ---
+
             tileManager.draw(g2);
             player.draw(g2);
             waveManager.draw(g2);
@@ -225,14 +221,14 @@ public class GamePanel extends JPanel implements Runnable{
                 p.draw(g2);
             }
 
-            // --- Desenha as Interfaces (Overlays) por cima ---
+            hud.draw(g2);
 
-            // Se estiver escolhendo personagem, desenha o menu de seleção
+            // desenha o menu de seleção
             if (gameState == characterMenuState) {
                 drawCharacterMenu(g2);
             }
 
-            // Se deu Game Over, desenha a tela de Game Over
+            // desenha a tela de Game Over
             if (gameState == gameOverState) {
                 drawGameOverScreen(g2);
             }
@@ -242,11 +238,11 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void drawMenu(Graphics2D g2) {
-        // Fundo
+        // fundo
         g2.setColor(Color.black);
         g2.fillRect(0, 0, screenWidth, screenHeight);
 
-        // Título do Jogo
+        // título do jogo
         g2.setFont(new Font("Arial", Font.BOLD, 70));
         String title = "BitGuardians";
         g2.setColor(Color.white);
@@ -254,10 +250,10 @@ public class GamePanel extends JPanel implements Runnable{
         int y = tileSize * 2;
         g2.drawString(title, x, y);
 
-        // Opções do Menu
+        // opções do menu
         g2.setFont(new Font("Arial", Font.PLAIN, 40));
 
-        // JOGAR
+        // opção 1
         String textJogar = "JOGAR";
         x = getXforCenteredText(g2, textJogar);
         y += tileSize * 3;
@@ -266,7 +262,7 @@ public class GamePanel extends JPanel implements Runnable{
             g2.drawString(">", x - tileSize, y);
         }
 
-        // SAIR
+        // opção 2
         String textSair = "SAIR";
         x = getXforCenteredText(g2, textSair);
         y += tileSize * 1.5;
@@ -289,15 +285,15 @@ public class GamePanel extends JPanel implements Runnable{
 
         g2.setFont(new Font("Arial", Font.PLAIN, 30));
 
-        // Posições Y fixas para o texto
+        // posições Y fixas para o texto
         int textYSwordsman = tileSize * 2 + tileSize * 3;
         int textYMage = textYSwordsman + (int)(tileSize * 1.5);
 
-        // Largura do texto (será usado para posicionar a imagem)
+        // largura do texto
         FontMetrics fm = g2.getFontMetrics();
         int xCentered;
         int textLength;
-        int imageOffsetX = tileSize / 2; // Offset (margem) entre o texto e a imagem
+        int imageOffsetX = tileSize / 2; // margem entre o texto e a imagem
 
 
         String textSwordsman = classEspadachim;
@@ -337,7 +333,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         g2.drawImage(player.getDisplayImage(), imageXMage, textYMage - tileSize / 2, tileSize, tileSize, null);
 
-        // Impede que se mova no menu
+        // impede que se mova no menu
         String currentSelectedClass = (characterMenuNum == 0) ? classEspadachim : classMago;
         player.setCharacterClass(currentSelectedClass);
         player.getPlayerImage();
@@ -348,10 +344,10 @@ public class GamePanel extends JPanel implements Runnable{
         // reseta posições e vida do jogador
         player.setDefaultValues();
 
-        // 1. PRIMEIRO recria o HUD para que o estado de GameOver volte a ser 'false'
+        // primeiro recria o HUD para que o estado de GameOver volte a ser 'false'
         hud = new Hud(this);
 
-        // 2. DEPOIS recria o WaveManager. Agora ele verá que não é mais GameOver e iniciará a Wave 1 corretamente
+        // depois recria o WaveManager. agora ele verá que não é mais GameOver e iniciará a Wave 1 corretamente
         waveManager = new WaveManager(this);
 
         // limpa projéteis
@@ -364,7 +360,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void drawGameOverScreen(Graphics2D g2) {
 
-        // Fundo
+        // fundo
         g2.setColor(new Color(0, 0, 0, 150));
         g2.fillRect(0, 0, screenWidth, screenHeight);
 
@@ -385,7 +381,7 @@ public class GamePanel extends JPanel implements Runnable{
         g2.setColor(Color.red);
         g2.drawString(text, x, y);
 
-        // --- Opções do Menu ---
+        // opções do menu
         g2.setFont(new Font("Arial", Font.BOLD, 40));
 
 
