@@ -51,14 +51,11 @@ public class Hud {
 
                 if (life <= 0 ){
                     life = 0;
-                    System.out.println("Game Over");
 
                         if (life <= 0 ){
                         life = 0;
                         gameOverState = true; // (MUDAR PARA TRUE, ESTÁ FALSE PARA TESTAR
-                        System.out.println("====================");
-                        System.out.println("     GAME OVER      ");
-                        System.out.println("====================");
+
                     }
                 }
 

@@ -34,6 +34,7 @@ public class GamePanel extends JPanel implements Runnable{
     public int gameState;
     public int menuNum = 0;
     public int characterMenuNum = 0;
+    public int gameOverNum = 0;
 
     private TileManager tileManager;
     private KeyHandler keyHandler = new KeyHandler();
@@ -175,7 +176,32 @@ public class GamePanel extends JPanel implements Runnable{
             }
         }
         else if (gameState == gameOverState) {
-            //o jogo para aqui
+
+            if (keyHandler.isUpPressed()) {
+                gameOverNum--;
+                if (gameOverNum < 0) {
+                    gameOverNum = 1;
+                }
+                keyHandler.setUpPressed(false);
+            }
+
+            if (keyHandler.isDownPressed()) {
+                gameOverNum++;
+                if (gameOverNum > 1) {
+                    gameOverNum = 0;
+                }
+                keyHandler.setDownPressed(false);
+            }
+
+            if (keyHandler.isEnterPressed()) {
+                if (gameOverNum == 0) {
+                    gameState = menuState;
+                    retry(); // Reseta o jogo
+                } else if (gameOverNum == 1) {
+                    System.exit(0);
+                }
+                keyHandler.setEnterPressed(false);
+            }
         }
     }
 
@@ -183,9 +209,14 @@ public class GamePanel extends JPanel implements Runnable{
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
 
-        if (gameState==menuState) {
+        // 1. Se estiver no Menu Principal, desenha APENAS o menu (fundo preto)
+        if (gameState == menuState) {
             drawMenu(g2);
-        } else if (gameState == playState || gameState == characterMenuState) {
+        }
+        // 2. Para qualquer outro estado (Jogando, Escolhendo Personagem ou Game Over)
+        // nós queremos ver o cenário do jogo ao fundo.
+        else {
+            // --- Desenha o Mundo do Jogo (Fundo) ---
             tileManager.draw(g2);
             player.draw(g2);
             waveManager.draw(g2);
@@ -194,14 +225,20 @@ public class GamePanel extends JPanel implements Runnable{
                 p.draw(g2);
             }
 
-            // DESENHA O MENU DE SELEÇÃO POR CIMA DO JOGO
+            // --- Desenha as Interfaces (Overlays) por cima ---
+
+            // Se estiver escolhendo personagem, desenha o menu de seleção
             if (gameState == characterMenuState) {
                 drawCharacterMenu(g2);
+            }
+
+            // Se deu Game Over, desenha a tela de Game Over
+            if (gameState == gameOverState) {
+                drawGameOverScreen(g2);
             }
         }
 
         g2.dispose();
-
     }
 
     public void drawMenu(Graphics2D g2) {
@@ -305,6 +342,76 @@ public class GamePanel extends JPanel implements Runnable{
         player.setCharacterClass(currentSelectedClass);
         player.getPlayerImage();
 
+    }
+
+    public void retry() {
+        // reseta posições e vida do jogador
+        player.setDefaultValues();
+
+        // 1. PRIMEIRO recria o HUD para que o estado de GameOver volte a ser 'false'
+        hud = new Hud(this);
+
+        // 2. DEPOIS recria o WaveManager. Agora ele verá que não é mais GameOver e iniciará a Wave 1 corretamente
+        waveManager = new WaveManager(this);
+
+        // limpa projéteis
+        projectiles.clear();
+
+        // reseta variáveis
+        gameOverNum = 0;
+        menuNum = 0;
+    }
+
+    public void drawGameOverScreen(Graphics2D g2) {
+
+        // Fundo
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.fillRect(0, 0, screenWidth, screenHeight);
+
+        int x;
+        int y;
+        String text;
+
+        g2.setFont(new Font("Arial", Font.BOLD, 90));
+        text = "GAME OVER";
+
+        // efeito no texto
+        g2.setColor(Color.black);
+        x = getXforCenteredText(g2, text);
+        y = tileSize * 4;
+        g2.drawString(text, x+5, y+5); // sombra
+
+        // texto principal vermelho
+        g2.setColor(Color.red);
+        g2.drawString(text, x, y);
+
+        // --- Opções do Menu ---
+        g2.setFont(new Font("Arial", Font.BOLD, 40));
+
+
+        text = "Menu Principal";
+        x = getXforCenteredText(g2, text);
+        y += tileSize * 3;
+
+        if (gameOverNum == 0) {
+            g2.setColor(Color.yellow);
+            g2.drawString(">", x - 40, y);
+        } else {
+            g2.setColor(Color.white);
+        }
+        g2.drawString(text, x, y);
+
+        text = "Sair do Jogo";
+        x = getXforCenteredText(g2, text);
+        y += 55;
+
+        if (gameOverNum == 1) {
+            g2.setColor(Color.yellow);
+            g2.drawString(">", x - 40, y);
+        } else {
+            g2.setColor(Color.white);
+        }
+        g2.drawString(text, x, y);
     }
 
     public String getClassEspadachim() {
