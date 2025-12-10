@@ -26,7 +26,11 @@ O jogo apresenta duas classes com estilos de combate diferentes:
 
 Para compilar e rodar o projeto, você precisará ter o **JDK 17 ou superior** instalado.
 
-### Via IDE (Recomendado)
+### Via executável (recomendado)
+1. Baixe o arquivo executável presente na aba de releases.
+2. Rode o arquivo com o JDK 17 ou superior instalado localmente.
+
+### Via IDE
 
 1.  Clone ou baixe este repositório.
 2.  Abra o projeto na sua IDE Java preferida (IntelliJ, Eclipse, etc.).
@@ -56,7 +60,7 @@ Para compilar e rodar o projeto, você precisará ter o **JDK 17 ou superior** i
 | Atacar            | `Barra de Espaço` |
 | Confirmar (Menus) | `Enter`        |
 | Upgrade Dano      | `1`|
-| Upgrade Attack Speed|`2`|
+| Upgrade Speed|`2`|
 | Upgrade Especial|`3`|
 
 
@@ -95,20 +99,16 @@ classDiagram
     }
 
     class GamePanel {
-        <<JPanel, Runnable>>
         -int tileSize
-        -Player player
-        -WaveManager waveManager
-        -TileManager tileManager
-        -CollisionCheck collisionCheck
-        -KeyHandler keyHandler
-        -Hud hud
+        -int maxScreenCol
+        -int maxScreenRow
         -List~Projectile~ projectiles
-        +GamePanel()
+        +int gameState
         +startThread()
         +run()
         +update()
         +paintComponent(Graphics g)
+        +retry()
     }
 
     class KeyHandler {
@@ -118,43 +118,77 @@ classDiagram
         +boolean leftPressed
         +boolean rightPressed
         +boolean attackPressed
+        +boolean enterPressed
         +keyPressed(KeyEvent e)
         +keyReleased(KeyEvent e)
     }
 
+    class MouseHandler {
+        <<MouseAdapter>>
+        +boolean mousePressed
+        +int mouseX
+        +int mouseY
+        +mousePressed(MouseEvent e)
+        +mouseReleased(MouseEvent e)
+    }
+
     class Entity {
+        <<Abstract>>
         -int life
-        -int x, y
+        -int x
+        -int y
         -int speed
         -String direction
         -Rectangle solidArea
-        +getLife()
-        +setLife(int)
-        +getX()
-        +getY()
+        -boolean colisionON
+        +update()*
+        +draw(Graphics2D g2)*
     }
 
     class Player {
         -String characterClass
         -Rectangle attackArea
         -boolean attacking
-        +Player(GamePanel, KeyHandler)
-        +setCharacterClass(String)
+        -int attackDamage
+        -boolean hasSlowEffect
+        +Player(GamePanel, KeyHandler, MouseHandler)
+        +setDefaultValues()
         +update()
         +attack()
+        +upgradeDamage()
+        +upgradeSpeed()
+        +upgradeSpecial()
         +draw(Graphics2D g2)
     }
-    
+
     class Monster {
+        -int originalSpeed
+        -boolean takingDamage
+        -boolean isSlowed
         +Monster(GamePanel, int, int)
+        +setDefaultValues(int, int)
         +takeDamage(int)
+        +applySlow()
         +update()
         +draw(Graphics2D g2)
     }
 
+    class FastMonster {
+        +FastMonster(GamePanel, int, int)
+        +setDefaultValues(int, int)
+    }
+
+    class TankMonster {
+        +TankMonster(GamePanel, int, int)
+        +setDefaultValues(int, int)
+    }
+
     class Projectile {
+        -int damage
+        -boolean hasSlowEffect
         +Projectile(GamePanel)
-        +set(int, int, String)
+        +setTarget(int, int, int, int)
+        +setStats(int, boolean)
         +update()
         +draw(Graphics2D g2)
     }
@@ -163,6 +197,7 @@ classDiagram
         -Tile[] tile
         -int[][] mapTileNum
         +TileManager(GamePanel)
+        +getTileImage()
         +loadMap()
         +draw(Graphics2D g2)
     }
@@ -182,39 +217,63 @@ classDiagram
     class WaveManager {
         -List~Monster~ activeMonsters
         -int currentWave
+        -boolean waveInProgress
         +WaveManager(GamePanel)
         +update()
         +damageMonster(int, int)
+        +spawnMonster()
         +draw(Graphics2D g2)
     }
-    
+
     class Hud {
-      -int life
-      -int wave
-      +Hud(GamePanel)
-      +update()
+        -int life
+        -int wave
+        -int gold
+        +Hud(GamePanel)
+        +update()
+        +draw(Graphics2D g2)
+        +addGold(int)
+        +spendGold(int)
     }
 
-    Main --> GamePanel : inicia
-    GamePanel "1" o-- "1" Player
-    GamePanel "1" o-- "1" WaveManager
-    GamePanel "1" o-- "1" TileManager
-    GamePanel "1" o-- "1" CollisionCheck
-    GamePanel "1" o-- "1" KeyHandler
-    GamePanel "1" o-- "1" Hud
-    GamePanel "1" *-- "0..*" Projectile
+    %% Relacionamentos
+    Main --> GamePanel : Instancia
 
-    WaveManager "1" *-- "0..*" Monster 
-    TileManager "1" *-- "0..*" Tile
+    GamePanel "1" *-- "1" Player : Composição
+    GamePanel "1" *-- "1" TileManager : Composição
+    GamePanel "1" *-- "1" WaveManager : Composição
+    GamePanel "1" *-- "1" CollisionCheck : Composição
+    GamePanel "1" *-- "1" Hud : Composição
+    GamePanel "1" *-- "1" KeyHandler : Composição
+    GamePanel "1" *-- "1" MouseHandler : Composição
+    GamePanel "1" o-- "0..*" Projectile : Agregação (Lista)
 
-    Player --|> Entity
-    Monster --|> Entity
-    Projectile --|> Entity
+    %% Herança de Entity
+    Entity <|-- Player
+    Entity <|-- Monster
+    Entity <|-- Projectile
 
-    Player ..> KeyHandler
-    Player ..> CollisionCheck
-    Projectile ..> CollisionCheck
+    %% Herança de Monster
+    Monster <|-- FastMonster
+    Monster <|-- TankMonster
+
+    %% Associações e Dependências
+    WaveManager "1" o-- "0..*" Monster : Gerencia Lista
+    TileManager "1" o-- "0..*" Tile : Contém Array
+
+    Player --> KeyHandler : Usa
+    Player --> MouseHandler : Usa
+    Player ..> Projectile : Cria (Se Mago)
     
-    GamePanel ..> Entity : gerencia entidades
-    Entity ..> GamePanel : interage com o painel
+    CollisionCheck ..> Entity : Verifica
+    CollisionCheck ..> Player : Verifica
+    CollisionCheck ..> Monster : Verifica
+
+    Hud ..> Player : Lê status (custo upgrade)
 ```
+
+## Créditos
+Gostariamos de agradecer:
+1. @j0ss.design pelo sprite do mago
+2. Link da playlist do youtube que usamos como referência para a base do nosso [código](https://www.youtube.com/watch?v=om59cwR7psI&list=PL_QPQmz5C6WUF-pOQDsbsKbaBZqXj4qSq)
+3. [Itch.io](https://itch.io/) e [CraftPix.net](https://craftpix.net/) por assets diversos como backgrounds e sprites
