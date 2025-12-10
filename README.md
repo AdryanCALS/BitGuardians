@@ -57,7 +57,7 @@ Para compilar e rodar o projeto, você precisará ter o **JDK 17 ou superior** i
 | Mover para Baixo  | `S`            |
 | Mover para Esquerda| `A`            |
 | Mover para Direita| `D`            |
-| Atacar            | `Barra de Espaço` |
+| Atacar            | `Barra de Espaço`/ `Mouse`|
 | Confirmar (Menus) | `Enter`        |
 | Upgrade Dano      | `1`|
 | Upgrade Speed|`2`|
