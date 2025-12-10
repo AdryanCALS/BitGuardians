@@ -27,7 +27,7 @@ O jogo apresenta duas classes com estilos de combate diferentes:
 Para compilar e rodar o projeto, você precisará ter o **JDK 17 ou superior** instalado.
 
 ### Via executável (recomendado)
-1. Baixe o arquivo executável presente na aba de releases.
+1. Baixe o arquivo .jar presente na aba de releases: [Clique aqui](https://github.com/AdryanCALS/BitGuardians/releases).
 2. Rode o arquivo com o JDK 17 ou superior instalado localmente.
 
 ### Via IDE
